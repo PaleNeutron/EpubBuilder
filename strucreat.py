@@ -7,12 +7,12 @@ import tmp
 
 
 def structure(description, chrpattern):
-    #Creat The Epub Structure Dir
+    # Creat The Epub Structure Dir
     if 'epubobject' not in os.listdir():
         os.makedirs(r'epubobject/OEBPS')
         os.makedirs(r'epubobject/META-INF')
 
-    #Creat The MimeType File
+    # Creat The MimeType File
     mimetype = open(r'epubobject/mimetype', 'w', encoding='UTF-8')
     mimetype.write(tmp.mimetype_tmp())
     mimetype.close()
@@ -34,11 +34,11 @@ def structure(description, chrpattern):
     html_doc = f.readlines()
     f.close()
 
-    book_title = html_doc[0]    #后面构建opf文件时用
+    book_title = html_doc[0]  #后面构建opf文件时用
     book_title = book_title.replace('\n', '')
-    book_author = html_doc[1]   #后面构建opf文件时用
+    book_author = html_doc[1]  #后面构建opf文件时用
     book_author = book_author.replace('\n', '')
-    chap_title_list = []        #构建一个list，存放章节标题，后面构建toc.ncx时用
+    chap_title_list = []  #构建一个list，存放章节标题，后面构建toc.ncx时用
     title_line_nums = []
     style_con = ''
 
@@ -49,16 +49,16 @@ def structure(description, chrpattern):
             style_con = html_doc[i]
 
     for j in range(0, len(title_line_nums)):
-        chap_title = html_doc[title_line_nums[j]]    #取得章节标题
-        chap_title = chap_title.replace('\n', '')    #去除换行符
-        chap_title_list.append(chap_title)           #存放每章标题，后面toc.ncx用
+        chap_title = html_doc[title_line_nums[j]]  #取得章节标题
+        chap_title = chap_title.replace('\n', '')  #去除换行符
+        chap_title_list.append(chap_title)  #存放每章标题，后面toc.ncx用
         chap_con_start_num = title_line_nums[j] + 1  #取得每章正文开始的行号
         if j < len(title_line_nums) - 1:
-            chap_con_end_num = title_line_nums[j + 1]      #取得每章正文结束的行号，实际多了一行。因为后续要使用list输出
-            chap_con_pre = html_doc[chap_con_start_num:chap_con_end_num] #通过行号把正文赋到一个变量。
+            chap_con_end_num = title_line_nums[j + 1]  #取得每章正文结束的行号，实际多了一行。因为后续要使用list输出
+            chap_con_pre = html_doc[chap_con_start_num:chap_con_end_num]  #通过行号把正文赋到一个变量。
         elif j == len(title_line_nums) - 1:
             chap_con_pre = html_doc[chap_con_start_num:]
-        chap_con = '    '.join(chap_con_pre) #因为上面得到的是list，因此需要转为字符串，加四个空格做缩进，代码更整齐。
+        chap_con = '    '.join(chap_con_pre)  #因为上面得到的是list，因此需要转为字符串，加四个空格做缩进，代码更整齐。
         chap_out_pre = tmp.html_tmp(chap_title, chap_con, style_con)
         if j >= 1000:
             num = str(j)

@@ -12,7 +12,7 @@ class WebInfo(FancyURLopener):
         super(WebInfo, self).__init__()
         self.version = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'
         protocol = "http://"
-##        self.proxies = {'http':'http://202.112.26.250:8080'} #使用SJTU的代理
+        # #        self.proxies = {'http':'http://202.112.26.250:8080'} #使用SJTU的代理
         if not url[0:len(protocol)] == protocol:
             url = protocol + url
         self.title = None
@@ -61,7 +61,6 @@ class WebInfo(FancyURLopener):
         elif self.host == 'book.zongheng.com':
             self.scan_zongheng(self.url)
 
-
         if 'images' not in os.listdir('.') and self.cover_href:
             os.mkdir('images')
         if self.cover_href:
@@ -72,19 +71,19 @@ class WebInfo(FancyURLopener):
             self.cover = response.read()
             #f.write(self.cover)
 
-    def scan_lkong(self,url):
+    def scan_lkong(self, url):
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
         self.description = self.soup.find('div', {'class': 'indent bm_c'}).getText().strip()
         self.score = self.soup.find('strong', {'class': "ll rating_num"}).string
         self.cover_href = self.soup.find('img', attrs={'alt': self.title}).get('src')
 
-    def scan_qidian(self,url):
+    def scan_qidian(self, url):
         self.title = self.soup.find("div", {"class": "title"}).h1.getText().strip()
         self.author = self.soup.body.find("span", {"itemprop": "name"}).string.strip()
         self.description = "\n".join(self.soup.body.find("span", {"itemprop": "description"}).getText().split())
         self.cover_href = self.soup.body.find("img", {"itemprop": "image"}).get("src")
 
-    def scan_chuangshi(self,url):
+    def scan_chuangshi(self, url):
         title_line = self.soup.body.findAll("div", {"class": "title"})[1].getText().split(">\r\n            ")
         self.subject = title_line[1:3]
         self.title = title_line[3].strip()
@@ -92,14 +91,14 @@ class WebInfo(FancyURLopener):
         self.description = "\n".join([a.string for a in self.soup.find("div", {"class": "info"}).contents])
         self.cover_href = self.soup.find("div", {"class": "cover"}).a.img.get("src")
 
-    def scan_zongheng(self,url):
+    def scan_zongheng(self, url):
         fl = self.soup.body.find('div', {'class': 'status fl'})
         self.title = fl.h1.a.string.strip()
         self.author = fl.p.em.a.string.strip()
         self.description = fl.find('div', {'class': 'info_con'}).p.string
         self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
 
-    def duplicate(self,Webinfo):
+    def duplicate(self, Webinfo):
         self.title = Webinfo.title
         self.author = Webinfo.author
         self.description = Webinfo.description

@@ -1,8 +1,8 @@
 import urllib.parse
 import os
 import subprocess
-import TinyEpub
 
+import TinyEpub
 from PySide import QtCore, QtGui
 
 import ui_mainwindow
@@ -60,7 +60,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         elif p and len(title) >= 8:
             url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % title
         # if p:
-        #     self.bookid=p
+        # self.bookid=p
         else:
             url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
         self.lineEdit_bookpage.setText(url)

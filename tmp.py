@@ -1,4 +1,4 @@
-## This is a template file
+# # This is a template file
 
 def mimetype_tmp():
     """the mimetpye file. return string"""

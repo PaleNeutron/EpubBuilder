@@ -3,11 +3,12 @@
 # Form implementation generated from reading ui file '.\ui_mainwindow.ui'
 #
 # Created: Tue Jul 29 13:38:42 2014
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -155,21 +156,41 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "EpubBuilder", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_edit_text.setText(QtGui.QApplication.translate("MainWindow", "编辑文本", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_start_build.setText(QtGui.QApplication.translate("MainWindow", "开始", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_bookpage.setText(QtGui.QApplication.translate("MainWindow", "书页网址", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_qidian.setText(QtGui.QApplication.translate("MainWindow", "起点", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_chuangshi.setText(QtGui.QApplication.translate("MainWindow", "创世", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButton_zongheng.setText(QtGui.QApplication.translate("MainWindow", "纵横", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_re.setText(QtGui.QApplication.translate("MainWindow", "章节划分正则表达式", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_re.setItemText(0, QtGui.QApplication.translate("MainWindow", "^(序|第[\\d零〇一二两三四五六七八九十百千]{0,10})章.{0,20}$", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_re.setItemText(1, QtGui.QApplication.translate("MainWindow", "^第[\\d零〇一二两三四五六七八九十百千]{0,10}卷.{0,20}(序|第[\\d零〇一二三四五六七八九十百千]{0,10})章.{0,20}$", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_re.setItemText(2, QtGui.QApplication.translate("MainWindow", "^.{0,5}第[\\d零〇一二两三四五六七八九十百千]{0,10}章.{0,20}$", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_re.setItemText(3, QtGui.QApplication.translate("MainWindow", "^\\d{1,4}.{1,30}$", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_re.setItemText(4, QtGui.QApplication.translate("MainWindow", "^[\\d零〇一二两三四五六七八九十百千]{1,10}[、 ]{1,3}.{0,20}$", None, QtGui.QApplication.UnicodeUTF8))
+        MainWindow.setWindowTitle(
+            QtGui.QApplication.translate("MainWindow", "EpubBuilder", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_edit_text.setText(
+            QtGui.QApplication.translate("MainWindow", "编辑文本", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_start_build.setText(
+            QtGui.QApplication.translate("MainWindow", "开始", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_bookpage.setText(
+            QtGui.QApplication.translate("MainWindow", "书页网址", None, QtGui.QApplication.UnicodeUTF8))
+        self.radioButton_qidian.setText(
+            QtGui.QApplication.translate("MainWindow", "起点", None, QtGui.QApplication.UnicodeUTF8))
+        self.radioButton_chuangshi.setText(
+            QtGui.QApplication.translate("MainWindow", "创世", None, QtGui.QApplication.UnicodeUTF8))
+        self.radioButton_zongheng.setText(
+            QtGui.QApplication.translate("MainWindow", "纵横", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_re.setText(
+            QtGui.QApplication.translate("MainWindow", "章节划分正则表达式", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_re.setItemText(0, QtGui.QApplication.translate("MainWindow",
+                                                                     "^(序|第[\\d零〇一二两三四五六七八九十百千]{0,10})章.{0,20}$", None,
+                                                                     QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_re.setItemText(1, QtGui.QApplication.translate("MainWindow",
+                                                                     "^第[\\d零〇一二两三四五六七八九十百千]{0,10}卷.{0,20}(序|第[\\d零〇一二三四五六七八九十百千]{0,10})章.{0,20}$",
+                                                                     None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_re.setItemText(2, QtGui.QApplication.translate("MainWindow",
+                                                                     "^.{0,5}第[\\d零〇一二两三四五六七八九十百千]{0,10}章.{0,20}$",
+                                                                     None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_re.setItemText(3, QtGui.QApplication.translate("MainWindow", "^\\d{1,4}.{1,30}$", None,
+                                                                     QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_re.setItemText(4, QtGui.QApplication.translate("MainWindow",
+                                                                     "^[\\d零〇一二两三四五六七八九十百千]{1,10}[、 ]{1,3}.{0,20}$",
+                                                                     None, QtGui.QApplication.UnicodeUTF8))
         self.label_cover.setText(QtGui.QApplication.translate("MainWindow", "封面", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_title.setText(QtGui.QApplication.translate("MainWindow", "书名：", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_author.setText(QtGui.QApplication.translate("MainWindow", "作者：", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_get_info.setText(QtGui.QApplication.translate("MainWindow", "抓取信息", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_title.setText(
+            QtGui.QApplication.translate("MainWindow", "书名：", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_author.setText(
+            QtGui.QApplication.translate("MainWindow", "作者：", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_get_info.setText(
+            QtGui.QApplication.translate("MainWindow", "抓取信息", None, QtGui.QApplication.UnicodeUTF8))
 

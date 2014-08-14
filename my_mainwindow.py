@@ -1,7 +1,9 @@
 __author__ = 'PaleNeutron'
 import os
+from urllib.parse import urlparse, unquote
+
 from PySide import QtGui, QtCore
-from urllib.parse import urlparse,unquote
+
 
 class MyMainWindow(QtGui.QMainWindow):
     file_loaded = QtCore.Signal(bool, str)
@@ -17,7 +19,7 @@ class MyMainWindow(QtGui.QMainWindow):
         ev.accept()
         # formats = ev.mimeData().formats()
         # for i in formats:
-        #     print(i)
+        # print(i)
         # if True:
         # if ev.mimeData().hasFormat(self.mine_type):
         #     ev.accept()
@@ -28,22 +30,24 @@ class MyMainWindow(QtGui.QMainWindow):
         #     # print(i)
         #     if i=="text/uri-list":
         #         print(i,"   ",repr(ev.mimeData().data(i)))
-##            print(i,"   ",ev.mimeData().data(i))
-##        with open("formats.txt", "ab") as f:
-##            for i in formats:
-##                f.write(("\n"+i+"\n").encode("UTF16"))
-##                f.write(ev.mimeData().data(i))
+
+        # #            print(i,"   ",ev.mimeData().data(i))
+
+    # #        with open("formats.txt", "ab") as f:
+    ##            for i in formats:
+    ##                f.write(("\n"+i+"\n").encode("UTF16"))
+    ##                f.write(ev.mimeData().data(i))
     def text_loaded(self, file_path):
         self.text_path = file_path
         self.file_loaded.emit(True, os.path.basename(os.path.splitext(file_path)[0]))
 
-    def image_loaded(self,file_path):
+    def image_loaded(self, file_path):
         with open(file_path, "b") as f:
             r = f.read()
         with open("images/cover.jpg", "wb") as f:
             f.write(r)
 
-    def epub_loaded(self,file_path):
+    def epub_loaded(self, file_path):
         self.epub_path = file_path
         self.file_loaded.emit(False, os.path.basename(os.path.splitext(file_path)[0]))
 

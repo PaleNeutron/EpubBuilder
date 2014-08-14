@@ -7,7 +7,7 @@ def epubzip(book_dir, book_title):
 
     list = []
 
-    ##book_title = book_title.decode('utf8')
+    # #book_title = book_title.decode('utf8')
 
     ##book_title = book_title.encode('gbk')
 
