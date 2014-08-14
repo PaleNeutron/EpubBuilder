@@ -1,3 +1,4 @@
+#!/opt/python3.4.1/bin/python3
 import urllib.parse
 import os
 import subprocess
