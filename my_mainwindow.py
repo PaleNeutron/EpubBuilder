@@ -68,8 +68,14 @@ class MyMainWindow(QtGui.QMainWindow):
             url = str(ev.mimeData().data(self.text_url_mime)).strip()
             if url.endswith(".txt"):
                 file_path = unquote(urlparse(url).path)
-                file_path = file_path[1:]
+                # file_path = file_path[1:]
                 print(file_path)
                 self.text_loaded(file_path)
+            elif url.endswith(".zip"):
+                zip_path = file_path = unquote(urlparse(url).path)
+                import zipfile
+
+                zf = zipfile.ZipFile(zip_path)
+                # to be continue
         else:
             ev.ignore()
