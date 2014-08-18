@@ -76,6 +76,8 @@ class MyMainWindow(QtGui.QMainWindow):
                 import zipfile
 
                 zf = zipfile.ZipFile(zip_path)
+                for f in zf:
+                    pass
                 # to be continue
         else:
             ev.ignore()
