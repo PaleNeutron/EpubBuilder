@@ -72,12 +72,17 @@ class MyMainWindow(QtGui.QMainWindow):
                 print(file_path)
                 self.text_loaded(file_path)
             elif url.endswith(".zip"):
-                zip_path = file_path = unquote(urlparse(url).path)
+                #打开一个zip文档，获取其中的txt
+                zip_path = unquote(urlparse(url).path)
                 import zipfile
-
                 zf = zipfile.ZipFile(zip_path)
-                for f in zf:
-                    pass
+                for fn in zf.namelist():
+                    #如果文档中txt文件大于10kb则解压到当前文件夹
+                    if fn.endswith(".txt") and zf.getinfo(fn).file_size>10*1024:
+                        zf.extract(fn)
+                        #发送文件位置信号
+                    self.text_loaded(os.curdir+os.sep+fn)
+                    break
                 # to be continue
         else:
             ev.ignore()

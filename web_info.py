@@ -22,13 +22,22 @@ class WebInfo(FancyURLopener):
         self.cover_href = None
         self.cover = None
         self.url = url
-        self.response = self.open(self.url)
-        self.info = self.response.info()
+    def open_page(self):
         try:
-            self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'))
-            self.host = Request(self.url).host
-        except OSError:
-            print("site is busy")
+            self.response = self.open(self.url)
+        except OSError as err:
+            if err.errno == 'socket error':
+                print("please check url or website is busy")
+        if self.response.getcode() ==200:
+            self.analyse_page()
+        elif self.response.getcode() ==404:
+            print("ERROR 404, page not found")
+        else:
+            print(self.response.getcode())
+    def analyse_page(self):
+        self.info = self.response.info()
+        self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'))
+        self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             try:
                 self.title = self.soup.find('h1').string
