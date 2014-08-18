@@ -22,46 +22,40 @@ class WebInfo(FancyURLopener):
         self.cover_href = None
         self.cover = None
         self.url = url
+        self.open_page()
+
     def open_page(self):
         try:
             self.response = self.open(self.url)
         except OSError as err:
             if err.errno == 'socket error':
                 print("please check url or website is busy")
-        if self.response.getcode() ==200:
+        if self.response.getcode() == 200:
             self.analyse_page()
-        elif self.response.getcode() ==404:
+        elif self.response.getcode() == 404:
             print("ERROR 404, page not found")
         else:
             print(self.response.getcode())
+
     def analyse_page(self):
         self.info = self.response.info()
         self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'))
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
-            try:
-                self.title = self.soup.find('h1').string
-                self.bookpage = self.soup.findAll('a', {'title': self.title})[1].get("href").split("/")
-                if self.bookpage[2] == 'www.qidian.com':
-                    # self.__init__("http://www.qidian.com/Book/" + self.bookpage[-1])
-                    try:
-                        w = WebInfo("http://www.qidian.com/Book/" + self.bookpage[-1])
-                        self.duplicate(w)
-                    except:
-                        print("qidian page is discarded")
-                        self.scan_lkong(self.url)
-                elif self.bookpage[2] == 'book.zongheng.com':
-                    try:
-                        w = WebInfo("http://book.zongheng.com/book/" + self.bookpage[-1])
-                        self.duplicate(w)
-                    except:
-                        print("zongheng page is discarded")
-                        self.scan_lkong(self.url)
-                else:
-                    self.scan_lkong(self.url)
+            self.title = self.soup.find('h1').string
+            bookpage = self.soup.findAll('a', {'title': self.title})[1].get("href")
+            newhost = bookpage.split("/")
+            if newhost == 'www.qidian.com':
+                # self.__init__("http://www.qidian.com/Book/" + self.bookpage[-1])
+                self.url = bookpage.replace("BookReader", "Book")
+                self.open_page()
+            elif newhost == 'book.zongheng.com':
+                self.url = bookpage.replace("showchapter", "book")
+                self.open_page()
+            else:
+                self.scan_lkong(self.url)
 
-            except AttributeError:
-                print("book not found")
+
         elif self.host == "chuangshi.qq.com":
             self.scan_chuangshi(self.url)
         elif self.host == "www.qidian.com":
@@ -78,7 +72,7 @@ class WebInfo(FancyURLopener):
             myopener.version = self.version
             response = myopener.open(self.cover_href)
             self.cover = response.read()
-            #f.write(self.cover)
+            # f.write(self.cover)
 
     def scan_lkong(self, url):
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
@@ -107,14 +101,14 @@ class WebInfo(FancyURLopener):
         self.description = fl.find('div', {'class': 'info_con'}).p.string
         self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
 
-    def duplicate(self, Webinfo):
-        self.title = Webinfo.title
-        self.author = Webinfo.author
-        self.description = Webinfo.description
-        self.score = Webinfo.score
-        self.cover_href = Webinfo.cover_href
-        self.cover = Webinfo.cover
-        self.url = Webinfo.url
-        self.response = Webinfo.response
-        self.info = Webinfo.info
+    def duplicate(self, webinfo_obj):
+        self.title = webinfo_obj.title
+        self.author = webinfo_obj.author
+        self.description = webinfo_obj.description
+        self.score = webinfo_obj.score
+        self.cover_href = webinfo_obj.cover_href
+        self.cover = webinfo_obj.cover
+        self.url = webinfo_obj.url
+        self.response = webinfo_obj.response
+        self.info = webinfo_obj.info
 
