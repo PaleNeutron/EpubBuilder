@@ -3,8 +3,8 @@ import re
 
 def BuildEpub(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章.{0,20}$)'):
     # images = os.listdir('images')
-    #if len(images) > 1:
-    #    os.remove('images\\cover.jpg')
+    # if len(images) > 1:
+    # os.remove('images\\cover.jpg')
     #if images[0] != 'cover.jpg':
     #    os.rename('images\\' + images[0], 'images\\' + 'cover.jpg')
     if title == None:

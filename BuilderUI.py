@@ -112,7 +112,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
             # txt_dirlist = [r"D:\Documents\txt", r"D:\Documents\txt\网络小说"]
             # for txt_dir in txt_dirlist:
             # if book_info.title + ".txt" in os.listdir(txt_dir):
-            #         self.file_path = txt_dir + os.sep + book_info.title + ".txt"
+            # self.file_path = txt_dir + os.sep + book_info.title + ".txt"
             #         self.pushButton_start_build.setEnabled(True)
             #         self.pushButton_edit_text.setEnabled(True)
 

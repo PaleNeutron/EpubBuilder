@@ -8,21 +8,21 @@ import tmp
 
 def structure(description, chrpattern):
     # Creat The Epub Structure Dir
-    if 'epubobject' not in os.listdir():
+    if 'epubobject' not in os.listdir('.'):
         os.makedirs(r'epubobject/OEBPS')
         os.makedirs(r'epubobject/META-INF')
 
-    # Creat The MimeType File
+    # Create The MimeType File
     mimetype = open(r'epubobject/mimetype', 'w', encoding='UTF-8')
     mimetype.write(tmp.mimetype_tmp())
     mimetype.close()
 
-    #Creat the container.xml, it's in META-INF/
+    # Create the container.xml, it's in META-INF/
     container = open(r'epubobject/META-INF/container.xml', 'w', encoding='UTF-8')
     container.write(tmp.container_tmp())
     container.close()
 
-    #Move the images & css files into the epubobject folder
+    # Move the images & css files into the epubobject folder
     if os.path.exists('./images') and not os.path.exists(r'epubobject/OEBPS/images'):
         shutil.copytree(r'./images', r'epubobject/OEBPS/images')
 

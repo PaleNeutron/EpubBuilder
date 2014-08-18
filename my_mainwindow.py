@@ -22,7 +22,7 @@ class MyMainWindow(QtGui.QMainWindow):
         # print(i)
         # if True:
         # if ev.mimeData().hasFormat(self.mine_type):
-        #     ev.accept()
+        # ev.accept()
         # else:
         #     ev.ignore()
         # formats = ev.mimeData().formats()
@@ -34,7 +34,7 @@ class MyMainWindow(QtGui.QMainWindow):
         # #            print(i,"   ",ev.mimeData().data(i))
 
     # #        with open("formats.txt", "ab") as f:
-    ##            for i in formats:
+    # #            for i in formats:
     ##                f.write(("\n"+i+"\n").encode("UTF16"))
     ##                f.write(ev.mimeData().data(i))
     def text_loaded(self, file_path):
@@ -75,14 +75,14 @@ class MyMainWindow(QtGui.QMainWindow):
                 #打开一个zip文档，获取其中的txt
                 zip_path = unquote(urlparse(url).path)
                 import zipfile
+
                 zf = zipfile.ZipFile(zip_path)
                 for fn in zf.namelist():
                     #如果文档中txt文件大于10kb则解压到当前文件夹
-                    if fn.endswith(".txt") and zf.getinfo(fn).file_size>10*1024:
+                    if fn.endswith(".txt") and zf.getinfo(fn).file_size > 10 * 1024:
                         zf.extract(fn)
                         #发送文件位置信号
-                    self.text_loaded(os.curdir+os.sep+fn)
+                    self.text_loaded(os.curdir + os.sep + fn)
                     break
-                # to be continue
         else:
             ev.ignore()
