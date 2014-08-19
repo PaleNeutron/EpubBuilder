@@ -42,18 +42,20 @@ class WebInfo(FancyURLopener):
         self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'))
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
-            self.title = self.soup.find('h1').string
-            bookpage = self.soup.findAll('a', {'title': self.title})[1].get("href")
-            newhost = bookpage.split("/")
-            if newhost == 'www.qidian.com':
-                # self.__init__("http://www.qidian.com/Book/" + self.bookpage[-1])
-                self.url = bookpage.replace("BookReader", "Book")
-                self.open_page()
-            elif newhost == 'book.zongheng.com':
-                self.url = bookpage.replace("showchapter", "book")
-                self.open_page()
+            if self.soup.find("div", {"class": "alert_info"}):
+                print("book not in lkong")
             else:
-                self.scan_lkong(self.url)
+                bookpage = self.soup.findAll('a', {'title': self.title})[1].get("href")
+                newhost = bookpage.split("/")
+                if newhost == 'www.qidian.com':
+                    # self.__init__("http://www.qidian.com/Book/" + self.bookpage[-1])
+                    self.url = bookpage.replace("BookReader", "Book")
+                    self.open_page()
+                elif newhost == 'book.zongheng.com':
+                    self.url = bookpage.replace("showchapter", "book")
+                    self.open_page()
+                else:
+                    self.scan_lkong(self.url)
 
 
         elif self.host == "chuangshi.qq.com":
@@ -75,6 +77,7 @@ class WebInfo(FancyURLopener):
             # f.write(self.cover)
 
     def scan_lkong(self, url):
+        self.title = self.soup.find('h1').string
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
         self.description = self.soup.find('div', {'class': 'indent bm_c'}).getText().strip()
         self.score = self.soup.find('strong', {'class': "ll rating_num"}).string

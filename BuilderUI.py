@@ -39,6 +39,15 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.cover_byte = b''
         self.cover = QtGui.QPixmap()
         self.mine_type = 'application/x-qt-windows-mime;value=\"FileNameW\"'
+        self.txt_folder = os.path.expanduser('~/document/txt')
+        self.epub_folder = os.path.expanduser('~/document/epub')
+        self.image_folder = "./images"
+        self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
+
+    def ensure_directory(self, *dir_list):
+        for d in dir_list:
+            if not os.path.isdir(d):
+                os.makedirs(d)
 
     # #self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
 
@@ -97,18 +106,22 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
     def get_info(self):
         self.web_address = self.lineEdit_bookpage.text()
         book_info = web_info.WebInfo(self.web_address)
-        self.title = book_info.title
-        self.author = book_info.author
-        self.description = book_info.description
-        self.lineEdit_title.setText(self.title)
-        self.lineEdit_author.setText(self.author)
-        self.textEdit_chapter.setDocument(QtGui.QTextDocument(self.description))
-        self.cover_byte = book_info.cover
-        self.cover.loadFromData(QtCore.QByteArray(self.cover_byte))
-        self.label_cover.clear()
-        self.label_cover.setPixmap(self.cover)
-        if not self.pushButton_start_build.isEnabled():
-            pass
+        if book_info.title:
+            self.title = book_info.title
+            self.author = book_info.author
+            self.description = book_info.description
+            self.lineEdit_title.setText(self.title)
+            self.lineEdit_author.setText(self.author)
+            self.textEdit_chapter.setDocument(QtGui.QTextDocument(self.description))
+            self.cover_byte = book_info.cover
+            self.cover.loadFromData(QtCore.QByteArray(self.cover_byte))
+            self.label_cover.clear()
+            self.label_cover.setPixmap(self.cover)
+            if not self.pushButton_start_build.isEnabled():
+                if self.title + ".txt" in os.listdir(self.txt_folder):
+                    self.file_path = self.txt_folder + os.sep + self.title + ".txt"
+                    self.pushButton_start_build.setEnabled(True)
+                    self.pushButton_edit_text.setEnabled(True)
             # txt_dirlist = [r"D:\Documents\txt", r"D:\Documents\txt\网络小说"]
             # for txt_dir in txt_dirlist:
             # if book_info.title + ".txt" in os.listdir(txt_dir):
