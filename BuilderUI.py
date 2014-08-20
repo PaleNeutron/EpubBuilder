@@ -43,8 +43,8 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.cover_byte = b''
         self.cover = QtGui.QPixmap()
         self.mine_type = 'application/x-qt-windows-mime;value=\"FileNameW\"'
-        self.txt_folder = os.path.expanduser('~/documents/txt')
-        self.epub_folder = os.path.expanduser('~/documents/epub')
+        self.txt_folder = os.path.expanduser('~/Documents/txt')
+        self.epub_folder = os.path.expanduser('~/Documents/epub')
         self.image_folder = "./images"
         self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
 
