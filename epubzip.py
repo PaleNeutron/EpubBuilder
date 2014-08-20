@@ -18,5 +18,5 @@ def epubzip(book_dir, book_title):
     z = zipfile.ZipFile(book_title + '.epub', 'w', zipfile.ZIP_DEFLATED)
 
     for i in list:
-        zipdir = i.replace(book_dir + '\\', '')
+        zipdir = i.replace(book_dir + os.sep, '')
         z.write(i, zipdir)
