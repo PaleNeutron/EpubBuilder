@@ -22,11 +22,11 @@ def BuildEpub(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章
             old = a.group()
             new = '<title>' + old + '</title>' + '\n' + '<h1>' + old + '</h1>\n'
             read.append(new)
-            contents.append(old + '\t\t' + str(round(i * 100 / len(rawread), 1)) + '\n')  # #添加目录信息以及当前章节百分比
+            contents.append(old + '\t\t' + str(round(i * 100 / len(rawread), 1)) + '\n')  # 添加目录信息以及当前章节百分比
             mark = i
         elif len(rawread[i]) > 2:
             read.append('<p>' + rawread[i] + '</p>\n')
-    read[-1] = '<p>' + read[-1] + '</p>\n'  ##添加html标签
+    read[-1] = '<p>' + read[-1] + '</p>\n'  # 添加html标签
     description = description.replace("\n", "</p><p>")
     read = [title + '\n', author + '\n', '<title>封面</title>\n', '<img src="images/cover.jpg" />\n',
             '<p>' + title + '</p>\n', '<p>' + author + '</p>\n', '<p>' + description + "**********" + '</p>\n'] + read

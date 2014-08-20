@@ -11,6 +11,10 @@ def structure(description, chrpattern):
     if 'epubobject' not in os.listdir('.'):
         os.makedirs(r'epubobject/OEBPS')
         os.makedirs(r'epubobject/META-INF')
+    else:
+        os.rmdir('epubobject')
+        os.makedirs(r'epubobject/OEBPS')
+        os.makedirs(r'epubobject/META-INF')
 
     # Create The MimeType File
     mimetype = open(r'epubobject/mimetype', 'w', encoding='UTF-8')
@@ -49,16 +53,16 @@ def structure(description, chrpattern):
             style_con = html_doc[i]
 
     for j in range(0, len(title_line_nums)):
-        chap_title = html_doc[title_line_nums[j]]  #取得章节标题
-        chap_title = chap_title.replace('\n', '')  #去除换行符
-        chap_title_list.append(chap_title)  #存放每章标题，后面toc.ncx用
-        chap_con_start_num = title_line_nums[j] + 1  #取得每章正文开始的行号
+        chap_title = html_doc[title_line_nums[j]]  # 取得章节标题
+        chap_title = chap_title.replace('\n', '')  # 去除换行符
+        chap_title_list.append(chap_title)  # 存放每章标题，后面toc.ncx用
+        chap_con_start_num = title_line_nums[j] + 1  # 取得每章正文开始的行号
         if j < len(title_line_nums) - 1:
-            chap_con_end_num = title_line_nums[j + 1]  #取得每章正文结束的行号，实际多了一行。因为后续要使用list输出
-            chap_con_pre = html_doc[chap_con_start_num:chap_con_end_num]  #通过行号把正文赋到一个变量。
+            chap_con_end_num = title_line_nums[j + 1]  # 取得每章正文结束的行号，实际多了一行。因为后续要使用list输出
+            chap_con_pre = html_doc[chap_con_start_num:chap_con_end_num]  # 通过行号把正文赋到一个变量。
         elif j == len(title_line_nums) - 1:
             chap_con_pre = html_doc[chap_con_start_num:]
-        chap_con = '    '.join(chap_con_pre)  #因为上面得到的是list，因此需要转为字符串，加四个空格做缩进，代码更整齐。
+        chap_con = '    '.join(chap_con_pre)  # 因为上面得到的是list，因此需要转为字符串，加四个空格做缩进，代码更整齐。
         chap_out_pre = tmp.html_tmp(chap_title, chap_con, style_con)
         if j >= 1000:
             num = str(j)
@@ -68,7 +72,7 @@ def structure(description, chrpattern):
             num = '00' + str(j)
         else:
             num = '000' + str(j)
-        chap_out = open('epubobject\\OEBPS\\c' + num + '.xhtml', 'w', encoding='UTF-8')
+        chap_out = open('epubobject/OEBPS/c' + num + '.xhtml', 'w', encoding='UTF-8')
         chap_out.write(chap_out_pre)
         chap_out.close()
 
@@ -131,7 +135,7 @@ def structure(description, chrpattern):
     opf_out_pre = tmp.opf_tmp(uuidnum, book_title, book_author, creatdate, manifest_out, spine_out, description,
                               chrpattern)
 
-    opf_out = open('epubobject\\OEBPS\\content.opf', 'w', encoding='utf8')
+    opf_out = open('epubobject/OEBPS/content.opf', 'w', encoding='utf8')
     opf_out.write(opf_out_pre)
     opf_out.close()
 
@@ -151,11 +155,11 @@ def structure(description, chrpattern):
 
     ncx_out_pre = tmp.ncx_tmp(uuidnum, book_title, navmap_out)
 
-    ncx_out = open('epubobject\\OEBPS\\toc.ncx', 'w', encoding='UTF-8')
+    ncx_out = open('epubobject/OEBPS/toc.ncx', 'w', encoding='UTF-8')
     ncx_out.write(ncx_out_pre)
     ncx_out.close()
     print('sturcture is done')
 
 
 if __name__ == '__main__':
-    structure()
+    structure("no description", "")

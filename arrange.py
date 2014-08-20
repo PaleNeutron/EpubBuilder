@@ -2,13 +2,16 @@ import os
 import shutil
 
 
-def arrange(route, title):
+def arrange(route, txt_folder, epub_folder, title):
     shutil.rmtree('epubobject')
-    shutil.copy(title + '.epub', r'D:\Documents\epub')
-    if os.path.split(route)[0] != 'D:\\Documents\\txt':
+    # 将epub复制一份到epub_folder中去
+    shutil.copy(title + '.epub', epub_folder)
+    # 如果文本文件位置不在设定的txt_folder里，则删除原文件
+    if os.path.split(route)[0] != txt_folder:
         try:
             os.remove(route)
-        except:
-            pass
-    print('arrange is done')
+            print('-origin txt removed')
+        except FileNotFoundError:
+            print("-txt not found")
+        print('arrange is done')
         

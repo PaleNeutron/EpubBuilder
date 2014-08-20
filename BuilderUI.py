@@ -9,7 +9,11 @@ from PySide import QtCore, QtGui
 import ui_mainwindow
 import my_mainwindow
 import web_info
-import Builder
+import neattxt
+import txt2html
+import arrange
+import strucreat
+import epubzip
 
 
 class BuilderUI(ui_mainwindow.Ui_MainWindow):
@@ -39,8 +43,8 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.cover_byte = b''
         self.cover = QtGui.QPixmap()
         self.mine_type = 'application/x-qt-windows-mime;value=\"FileNameW\"'
-        self.txt_folder = os.path.expanduser('~/document/txt')
-        self.epub_folder = os.path.expanduser('~/document/epub')
+        self.txt_folder = os.path.expanduser('~/documents/txt')
+        self.epub_folder = os.path.expanduser('~/documents/epub')
         self.image_folder = "./images"
         self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
 
@@ -137,11 +141,18 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         if not self.cover.isNull():
             self.cover.save(os.getcwd() + '/images/cover.jpg')
         self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
-        Builder.start_build(self.file_path, self.title, self.author, self.description, self.chr_pattern)
+
+        text = neattxt.get_neat_txt(self.file_path, self.title, self.txt_folder).split("\n")
+        txt2html.BuildEpub(self.title, self.author, text, self.description, self.chr_pattern)
+        strucreat.structure(self.description, self.chr_pattern)
+        epubzip.epubzip('epubobject', self.title)
+        arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
+
+
         with open('contents.txt', encoding='utf8') as f:
             r = f.read()
             self.textEdit_chapter.setText(r)
-        self.file_path = r'D:\Documents\txt' + os.sep + self.title + '.txt'
+        self.file_path = self.txt_folder + os.sep + self.title + '.txt'
 
 
 if __name__ == '__main__':
