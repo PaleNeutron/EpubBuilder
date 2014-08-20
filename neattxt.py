@@ -28,7 +28,7 @@ def get_neat_txt(route, title, txt_folder):
     text = text.replace('正文(520xs.com) ', '')
     text = text.replace('520小说', '书')
     text = text.replace('520xs', '')
-    text = text.replace('\n正文', '\n')
+    text = re.sub('^正文[ 　\t]*', '', text, flags=re.M)
     text = hxchange.change(text)
     text = text.replace('\n\n', '\n')
 

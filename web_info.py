@@ -45,10 +45,9 @@ class WebInfo(FancyURLopener):
             if self.soup.find("div", {"class": "alert_info"}):
                 print("book not in lkong")
             else:
-                bookpage = self.soup.findAll('a', {'title': self.title})[1].get("href")
-                newhost = bookpage.split("/")
+                bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
+                newhost = Request(bookpage).host
                 if newhost == 'www.qidian.com':
-                    # self.__init__("http://www.qidian.com/Book/" + self.bookpage[-1])
                     self.url = bookpage.replace("BookReader", "Book")
                     self.open_page()
                 elif newhost == 'book.zongheng.com':
@@ -99,19 +98,7 @@ class WebInfo(FancyURLopener):
 
     def scan_zongheng(self, url):
         fl = self.soup.body.find('div', {'class': 'status fl'})
-        self.title = fl.h1.a.string.strip()
+        self.title = fl.h1.find("a", target=False).string.strip()
         self.author = fl.p.em.a.string.strip()
         self.description = fl.find('div', {'class': 'info_con'}).p.string
         self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
-
-    def duplicate(self, webinfo_obj):
-        self.title = webinfo_obj.title
-        self.author = webinfo_obj.author
-        self.description = webinfo_obj.description
-        self.score = webinfo_obj.score
-        self.cover_href = webinfo_obj.cover_href
-        self.cover = webinfo_obj.cover
-        self.url = webinfo_obj.url
-        self.response = webinfo_obj.response
-        self.info = webinfo_obj.info
-

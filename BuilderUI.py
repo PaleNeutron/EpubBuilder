@@ -21,10 +21,13 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     def __init__(self):
         super(BuilderUI, self).__init__()
-        self.editor_path = "gvim"
+        # self.editor_path = "gvim"
+        self.editor_path = "subl"
 
         self.main_window = my_mainwindow.MyMainWindow()
         self.setupUi(self.main_window)
+        self.main_window.windowList = []
+
         self.pushButton_get_info.clicked.connect(self.get_info)
         self.lineEdit_title.textChanged.connect(self.to_bookpage)
         self.pushButton_start_build.clicked.connect(self.build)
@@ -126,12 +129,6 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
                     self.file_path = self.txt_folder + os.sep + self.title + ".txt"
                     self.pushButton_start_build.setEnabled(True)
                     self.pushButton_edit_text.setEnabled(True)
-            # txt_dirlist = [r"D:\Documents\txt", r"D:\Documents\txt\网络小说"]
-            # for txt_dir in txt_dirlist:
-            # if book_info.title + ".txt" in os.listdir(txt_dir):
-            # self.file_path = txt_dir + os.sep + book_info.title + ".txt"
-            #         self.pushButton_start_build.setEnabled(True)
-            #         self.pushButton_edit_text.setEnabled(True)
 
     def build(self):
         self.title = self.lineEdit_title.text()
@@ -147,12 +144,18 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         strucreat.structure(self.description, self.chr_pattern)
         epubzip.epubzip('epubobject', self.title)
         arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
+        self.file_path = self.txt_folder + os.sep + self.title + '.txt'
 
+        self.show_contents()
 
+    def show_contents(self):
         with open('contents.txt', encoding='utf8') as f:
             r = f.read()
-            self.textEdit_chapter.setText(r)
-        self.file_path = self.txt_folder + os.sep + self.title + '.txt'
+        browser = QtGui.QTextBrowser()
+        browser.append(r)
+        browser.setGeometry(QtCore.QRect(300, 150, 600, 400))
+        self.main_window.windowList.append(browser)
+        browser.show()
 
 
 if __name__ == '__main__':
