@@ -17,7 +17,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     def __init__(self):
         super(BuilderUI, self).__init__()
-        self.editor_path = r"C:\Program Files\Notepad++" + os.sep + "Notepad++.exe"
+        self.editor_path = r"C:\Program Files (x86)\Notepad++" + os.sep + "Notepad++.exe"
 
         self.main_window = my_mainwindow.MyMainWindow()
         self.setupUi(self.main_window)
