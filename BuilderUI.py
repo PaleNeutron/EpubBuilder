@@ -2,6 +2,7 @@
 import urllib.parse
 import os
 import subprocess
+import sys
 
 import TinyEpub
 from PySide import QtCore, QtGui
@@ -22,8 +23,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     def __init__(self):
         super(BuilderUI, self).__init__()
-        self.editor_path = "gvim"
-        # self.editor_path = "subl"
+        if sys.platform == "win32":
+            self.editor_path = "notepad"
+        elif sys.platform == "linux":
+            self.editor_path = "gvim"
+            # self.editor_path = "subl"
 
         self.file_path = ''
         self.bookid = ''
@@ -62,10 +66,10 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     # #self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
 
-    @QtCore.Slot(bool, str)
-    def load_file(self, istxt, title):
-        if istxt:
-            self.title = title
+    @QtCore.Slot(str)
+    def load_file(self, file_path):
+        if file_path.endswith(".txt"):
+            self.title = os.path.basename(os.path.splitext(file_path)[0])
             self.load_text()
         else:
             self.load_epub()
