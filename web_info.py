@@ -4,38 +4,43 @@ import os
 
 import bs4
 
+import messager
+
 
 class WebInfo(FancyURLopener):
     """grab all the book information from a specific website"""
 
-    def __init__(self, url):
+    def __init__(self, url=None):
         super(WebInfo, self).__init__()
         self.version = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'
         protocol = "http://"
         # #        self.proxies = {'http':'http://202.112.26.250:8080'} #使用SJTU的代理
-        if not url[0:len(protocol)] == protocol:
-            url = protocol + url
         self.title = None
         self.author = None
         self.description = None
         self.score = None
         self.cover_href = None
         self.cover = None
+        self.message = messager.message
+
         self.url = url
-        self.open_page()
+        if self.url:
+            if not self.url[0:len(protocol)] == protocol:
+                self.url = protocol + self.url
+            self.open_page()
 
     def open_page(self):
         try:
             self.response = self.open(self.url)
         except OSError as err:
             if err.errno == 'socket error':
-                print("please check url or website is busy")
+                self.message.emit("please check url or website is busy")
         if self.response.getcode() == 200:
             self.analyse_page()
         elif self.response.getcode() == 404:
-            print("ERROR 404, page not found")
+            self.message.emit("ERROR 404, page not found")
         else:
-            print(self.response.getcode())
+            self.message.emit(self.response.getcode())
 
     def analyse_page(self):
         self.info = self.response.info()
@@ -43,7 +48,7 @@ class WebInfo(FancyURLopener):
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             if self.soup.find("div", {"class": "alert_info"}):
-                print("book not in lkong")
+                self.message.emit("book not in lkong")
             else:
                 bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
                 newhost = Request(bookpage).host
@@ -93,7 +98,7 @@ class WebInfo(FancyURLopener):
         self.subject = title_line[1:3]
         self.title = title_line[3].strip()
         self.author = self.soup.find("div", {"class": "au_name"}).a.string.strip()
-        self.description = "\n".join([a.string for a in self.soup.find("div", {"class": "info"}).contents])
+        self.description = self.soup.find("div", {"class": "info"}).getText("\n")
         self.cover_href = self.soup.find("div", {"class": "cover"}).a.img.get("src")
 
     def scan_zongheng(self, url):

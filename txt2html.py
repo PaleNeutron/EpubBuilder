@@ -1,7 +1,7 @@
 import re
 
 
-def BuildEpub(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章.{0,20}$)'):
+def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章.{0,20}$)'):
     # images = os.listdir('images')
     # if len(images) > 1:
     # os.remove('images\\cover.jpg')
@@ -18,12 +18,13 @@ def BuildEpub(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章
     ##读取文档
     for i in range(len(rawread) - 1):
         a = re.search(rule, rawread[i])
-        if a != None and i - mark > 6:
-            old = a.group()
-            new = '<title>' + old + '</title>' + '\n' + '<h1>' + old + '</h1>\n'
-            read.append(new)
-            contents.append(old + '\t\t' + str(round(i * 100 / len(rawread), 1)) + '\n')  # 添加目录信息以及当前章节百分比
-            mark = i
+        if a != None:
+            if i - mark > 6:
+                old = a.group()
+                new = '<title>' + old + '</title>' + '\n' + '<h1>' + old + '</h1>\n'
+                read.append(new)
+                contents.append(old + '\t\t' + str(round(i * 100 / len(rawread), 1)) + '\n')  # 添加目录信息以及当前章节百分比
+                mark = i
         elif len(rawread[i]) > 2:
             read.append('<p>' + rawread[i] + '</p>\n')
     read[-1] = '<p>' + read[-1] + '</p>\n'  # 添加html标签
@@ -40,9 +41,8 @@ def BuildEpub(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章
     output.close()
     ##输出
 
-    contents_out = open('contents.txt', 'w', encoding='UTF-8')
-    contents_out.writelines(contents)
-    contents_out.close()
-    ##输出章节名用于检查
+    with open('contents.txt', 'w', encoding='UTF-8') as contents_out:
+        contents_out.writelines(contents)
+        # #输出章节名用于检查
 
     print('format is done')

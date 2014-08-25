@@ -12,7 +12,7 @@ def structure(description, chrpattern):
         os.makedirs(r'epubobject/OEBPS')
         os.makedirs(r'epubobject/META-INF')
     else:
-        os.rmdir('epubobject')
+        shutil.rmtree('epubobject')
         os.makedirs(r'epubobject/OEBPS')
         os.makedirs(r'epubobject/META-INF')
 
@@ -102,6 +102,8 @@ def structure(description, chrpattern):
 
     for k in os.walk(r'epubobject/OEBPS'):
         fileslist += k[2]
+
+    fileslist.sort()
 
     for l in range(0, len(fileslist)):
 

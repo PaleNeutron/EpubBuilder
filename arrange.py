@@ -1,6 +1,9 @@
 import os
 import shutil
 
+import messager
+
+message = messager.message
 
 def arrange(route, txt_folder, epub_folder, title):
     shutil.rmtree('epubobject')
@@ -14,8 +17,7 @@ def arrange(route, txt_folder, epub_folder, title):
     if os.path.split(route)[0] != txt_folder:
         try:
             os.remove(route)
-            print('-origin txt removed')
+            message.emit('-origin txt removed')
         except FileNotFoundError:
-            print("-txt not found")
-        print('arrange is done')
+            message.emit("-txt not found")
         

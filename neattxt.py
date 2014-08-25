@@ -3,6 +3,10 @@ import os
 
 import hxchange
 
+import messager
+
+message = messager.message
+
 
 def get_neat_txt(route, title, txt_folder):
     coding_list = ("utf8", "gb18030")
@@ -14,13 +18,13 @@ def get_neat_txt(route, title, txt_folder):
             f.write(r2)
     for i in range(len(coding_list)):
         try:
-            source = open(route, 'r', encoding=coding_list[i])
-            text = source.read()
-            source.close()
+            with open(route, 'r', encoding=coding_list[i]) as source:
+                text = source.read()
             break
         except UnicodeDecodeError:
-            print("encoding is not", coding_list[i])
-            pass
+            message.emit("encoding is not" + coding_list[i])
+            if i == len(coding_list) - 1:
+                raise IOError("can't read text file")
     text = re.sub(r'^[ 　\t]+', '', text, flags=re.M)  # 去除行首的半角或全角空格以及制表符
     text = re.sub(r'<.{1,200}>.{1,50}<.{1,200}>', '', text)
     text = re.sub(r'<.{1,200}>', '', text)

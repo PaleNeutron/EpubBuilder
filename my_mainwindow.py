@@ -10,33 +10,21 @@ class MyMainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         super(MyMainWindow, self).__init__()
+        self.windowList = []
         self.text_path = ''
         self.epub_path = ''
         self.win_file_mime = "application/x-qt-windows-mime;value=\"FileNameW\""
         self.text_url_mime = "text/uri-list"
+        self.creat_content_broswer()
+
+    def creat_content_broswer(self):
+        self.content_browser = QtGui.QTextBrowser()
+        self.content_browser.setGeometry(QtCore.QRect(300, 150, 600, 400))
+        self.windowList.append(self.content_browser)
 
     def dragEnterEvent(self, ev):
         ev.accept()
-        # formats = ev.mimeData().formats()
-        # for i in formats:
-        # print(i)
-        # if True:
-        # if ev.mimeData().hasFormat(self.mine_type):
-        # ev.accept()
-        # else:
-        #     ev.ignore()
-        # formats = ev.mimeData().formats()
-        # for i in formats:
-        #     # print(i)
-        #     if i=="text/uri-list":
-        #         print(i,"   ",repr(ev.mimeData().data(i)))
 
-        # #            print(i,"   ",ev.mimeData().data(i))
-
-    # #        with open("formats.txt", "ab") as f:
-    # #            for i in formats:
-    ##                f.write(("\n"+i+"\n").encode("UTF16"))
-    ##                f.write(ev.mimeData().data(i))
     def text_loaded(self, file_path):
         self.text_path = file_path
         self.file_loaded.emit(True, os.path.basename(os.path.splitext(file_path)[0]))
@@ -64,6 +52,7 @@ class MyMainWindow(QtGui.QMainWindow):
                 self.image_loaded(file_path)
             elif file_path.endswith(".epub"):
                 self.epub_loaded(file_path)
+                print(file_path)
         elif ev.mimeData().hasFormat(self.text_url_mime):
             url = str(ev.mimeData().data(self.text_url_mime)).strip()
             if url.endswith(".txt"):
@@ -71,6 +60,11 @@ class MyMainWindow(QtGui.QMainWindow):
                 # file_path = file_path[1:]
                 print(file_path)
                 self.text_loaded(file_path)
+            elif url.endswith(".epub"):
+                file_path = unquote(urlparse(url).path)
+                # file_path = file_path[1:]
+                print(file_path)
+                self.epub_loaded(file_path)
             elif url.endswith(".zip"):
                 #打开一个zip文档，获取其中的txt
                 zip_path = unquote(urlparse(url).path)

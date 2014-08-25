@@ -14,6 +14,7 @@ import txt2html
 import arrange
 import strucreat
 import epubzip
+import messager
 
 
 class BuilderUI(ui_mainwindow.Ui_MainWindow):
@@ -21,21 +22,9 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     def __init__(self):
         super(BuilderUI, self).__init__()
-        # self.editor_path = "gvim"
-        self.editor_path = "subl"
+        self.editor_path = "gvim"
+        # self.editor_path = "subl"
 
-        self.main_window = my_mainwindow.MyMainWindow()
-        self.setupUi(self.main_window)
-        self.main_window.windowList = []
-
-        self.pushButton_get_info.clicked.connect(self.get_info)
-        self.lineEdit_title.textChanged.connect(self.to_bookpage)
-        self.pushButton_start_build.clicked.connect(self.build)
-        self.pushButton_edit_text.clicked.connect(self.edit_text)
-        self.main_window.file_loaded.connect(self.load_file)
-        self.radioButton_qidian.clicked.connect(self.choose_site)
-        self.radioButton_chuangshi.clicked.connect(self.choose_site)
-        self.radioButton_zongheng.clicked.connect(self.choose_site)
         self.file_path = ''
         self.bookid = ''
         self.title = ''
@@ -50,6 +39,21 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.epub_folder = os.path.expanduser('~/Documents/epub')
         self.image_folder = "./images"
         self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
+        self.book_info = web_info.WebInfo()
+        self.message = messager.message
+        self.main_window = my_mainwindow.MyMainWindow()
+        self.setupUi(self.main_window)
+
+        self.pushButton_get_info.clicked.connect(self.get_info)
+        self.lineEdit_title.textChanged.connect(self.to_bookpage)
+        self.pushButton_start_build.clicked.connect(self.build)
+        self.pushButton_edit_text.clicked.connect(self.edit_text)
+        self.main_window.file_loaded.connect(self.load_file)
+        self.radioButton_qidian.clicked.connect(self.choose_site)
+        self.radioButton_chuangshi.clicked.connect(self.choose_site)
+        self.radioButton_zongheng.clicked.connect(self.choose_site)
+        self.message.connect(self.statusbar.showMessage)
+        self.progressBar.setValue(messager.process_rate)
 
     def ensure_directory(self, *dir_list):
         for d in dir_list:
@@ -66,6 +70,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         else:
             self.load_epub()
         self.lineEdit_title.setText(self.title)
+        self.check_has_txt()
 
     @QtCore.Slot(str)
     def to_bookpage(self, title):
@@ -84,7 +89,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     def choose_site(self):
         sender = self.main_window.sender()
-        print(sender)
+        self.statusbar.showMessage(repr(sender))
 
     def edit_text(self):
         subprocess.Popen([self.editor_path, self.file_path])
@@ -111,24 +116,28 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.label_cover.setPixmap(self.cover)
 
     def get_info(self):
-        self.web_address = self.lineEdit_bookpage.text()
-        book_info = web_info.WebInfo(self.web_address)
-        if book_info.title:
-            self.title = book_info.title
-            self.author = book_info.author
-            self.description = book_info.description
+        self.book_info.url = self.lineEdit_bookpage.text()
+        self.book_info.open_page()
+        if self.book_info.title:
+            self.title = self.book_info.title
+            self.author = self.book_info.author
+            self.description = self.book_info.description
+            self.lineEdit_bookpage.setText(self.book_info.url)
             self.lineEdit_title.setText(self.title)
             self.lineEdit_author.setText(self.author)
             self.textEdit_chapter.setDocument(QtGui.QTextDocument(self.description))
-            self.cover_byte = book_info.cover
+            self.cover_byte = self.book_info.cover
             self.cover.loadFromData(QtCore.QByteArray(self.cover_byte))
             self.label_cover.clear()
             self.label_cover.setPixmap(self.cover)
+            self.check_has_txt()
+
+    def check_has_txt(self):
+        if self.title + ".txt" in os.listdir(self.txt_folder):
+            self.file_path = self.txt_folder + os.sep + self.title + ".txt"
             if not self.pushButton_start_build.isEnabled():
-                if self.title + ".txt" in os.listdir(self.txt_folder):
-                    self.file_path = self.txt_folder + os.sep + self.title + ".txt"
-                    self.pushButton_start_build.setEnabled(True)
-                    self.pushButton_edit_text.setEnabled(True)
+                self.pushButton_start_build.setEnabled(True)
+                self.pushButton_edit_text.setEnabled(True)
 
     def build(self):
         self.title = self.lineEdit_title.text()
@@ -140,10 +149,13 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
 
         text = neattxt.get_neat_txt(self.file_path, self.title, self.txt_folder).split("\n")
-        txt2html.BuildEpub(self.title, self.author, text, self.description, self.chr_pattern)
+        txt2html.format_txt(self.title, self.author, text, self.description, self.chr_pattern)
+        self.message.emit('arrange is done')
         strucreat.structure(self.description, self.chr_pattern)
+        self.message.emit('structure is done')
         epubzip.epubzip('epubobject', self.title)
         arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
+        self.message.emit('arrange is done')
         self.file_path = self.txt_folder + os.sep + self.title + '.txt'
 
         self.show_contents()
@@ -151,11 +163,9 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
     def show_contents(self):
         with open('contents.txt', encoding='utf8') as f:
             r = f.read()
-        browser = QtGui.QTextBrowser()
-        browser.append(r)
-        browser.setGeometry(QtCore.QRect(300, 150, 600, 400))
-        self.main_window.windowList.append(browser)
-        browser.show()
+        # self.main_window.content_browser.clear()
+        self.main_window.content_browser.setText(r)
+        self.main_window.content_browser.show()
 
 
 if __name__ == '__main__':
