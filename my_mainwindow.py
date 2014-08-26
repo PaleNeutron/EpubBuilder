@@ -54,7 +54,7 @@ class MyMainWindow(QtGui.QMainWindow):
         # print(i)
         # if ev.mimeData().hasFormat(self.win_file_mime):
         # ev.accept()
-        # file_path = bytes(ev.mimeData().data(self.win_file_mime).data())[:-2].decode('utf16')
+        #     file_path = bytes(ev.mimeData().data(self.win_file_mime).data())[:-2].decode('utf16')
         #     if file_path.endswith(".txt"):
         #         self.text_loaded(file_path)
         #     elif file_path.endswith(".jpg") or file_path.endswith(".jpeg") or file_path.endswith(".png"):
