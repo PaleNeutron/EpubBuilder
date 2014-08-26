@@ -9,7 +9,7 @@ def epubzip(book_dir, book_title):
 
     # #book_title = book_title.decode('utf8')
 
-    ##book_title = book_title.encode('gbk')
+    # #book_title = book_title.encode('gbk')
 
     for i in os.walk(book_dir):
         for l in i[2]:
@@ -18,5 +18,5 @@ def epubzip(book_dir, book_title):
     z = zipfile.ZipFile(book_title + '.epub', 'w', zipfile.ZIP_DEFLATED)
 
     for i in list:
-        zipdir = i.replace(book_dir + '\\', '')
+        zipdir = i.replace(book_dir + os.sep, '')
         z.write(i, zipdir)

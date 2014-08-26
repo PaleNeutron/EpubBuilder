@@ -1,14 +1,25 @@
 import os
 import shutil
 
+import messager
 
-def arrange(route, title):
+
+message = messager.message
+
+
+def arrange(route, txt_folder, epub_folder, title):
     shutil.rmtree('epubobject')
-    shutil.copy(title + '.epub', r'D:\Documents\epub')
-    if os.path.split(route)[0] != 'D:\\Documents\\txt':
+    # 将epub移动到epub_folder中去
+    if os.path.exists(epub_folder + os.sep + title + '.epub'):
+        shutil.copy(title + '.epub', epub_folder)
+        os.remove(title + '.epub')
+    else:
+        shutil.move(title + '.epub', epub_folder)
+    # 如果文本文件位置不在设定的txt_folder里，则删除原文件
+    if os.path.split(route)[0] != txt_folder:
         try:
             os.remove(route)
-        except:
-            pass
-    print('arrange is done')
+            message.emit('-origin txt removed')
+        except FileNotFoundError:
+            message.emit("-txt not found")
         
