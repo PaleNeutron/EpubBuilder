@@ -68,10 +68,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
     @QtCore.Slot(str)
     def load_file(self, file_path):
         if file_path.endswith(".txt"):
+            self.file_path = file_path
             self.title = os.path.basename(os.path.splitext(file_path)[0])
             self.load_text()
         else:
-            self.load_epub()
+            self.load_epub(file_path)
         self.lineEdit_title.setText(self.title)
         self.check_has_txt()
 
@@ -84,8 +85,6 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
             url = "http://www.qidian.com/Book/%s.aspx" % title
         elif p and len(title) >= 8:
             url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % title
-        # if p:
-        # self.bookid=p
         else:
             url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
         self.lineEdit_bookpage.setText(url)
@@ -98,12 +97,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         subprocess.Popen([self.editor_path, self.file_path])
 
     def load_text(self):
-        self.file_path = self.main_window.text_path
         self.pushButton_start_build.setEnabled(True)
         self.pushButton_edit_text.setEnabled(True)
 
-    def load_epub(self):
-        book = TinyEpub.Epub(self.main_window.epub_path)
+    def load_epub(self, file_path):
+        book = TinyEpub.Epub(file_path)
         self.title = book.title
         self.author = book.author
         self.description = book.description
