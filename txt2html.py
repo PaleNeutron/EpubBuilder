@@ -44,5 +44,3 @@ def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}�
     with open('contents.txt', 'w', encoding='UTF-8') as contents_out:
         contents_out.writelines(contents)
         # #输出章节名用于检查
-
-    print('format is done')

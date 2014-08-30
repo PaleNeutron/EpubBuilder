@@ -37,7 +37,7 @@ def get_neat_txt(route, title, txt_folder):
     text = hxchange.change(text)
     text = text.replace('\n\n', '\n')
 
-    with open(txt_folder + os.sep + title + '.txt', 'w') as f:
+    with open(txt_folder + os.sep + title + '.txt', 'w',errors='replace') as f:
         f.write(text)
     return text
 

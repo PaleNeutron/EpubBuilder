@@ -71,7 +71,7 @@ class MyMainWindow(QtGui.QMainWindow):
 
             elif uri.endswith(".zip"):
                 #打开一个zip文档，获取其中的txt
-                zip_path = unquote(urlparse(uri).path)
+                zip_path = self.uri_to_path(uri)
                 import zipfile
 
                 zf = zipfile.ZipFile(zip_path)

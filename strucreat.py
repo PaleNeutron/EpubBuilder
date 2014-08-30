@@ -160,7 +160,6 @@ def structure(description, chrpattern):
     ncx_out = open('epubobject/OEBPS/toc.ncx', 'w', encoding='UTF-8')
     ncx_out.write(ncx_out_pre)
     ncx_out.close()
-    print('sturcture is done')
 
 
 if __name__ == '__main__':

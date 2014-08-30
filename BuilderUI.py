@@ -131,7 +131,8 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
             self.cover.loadFromData(QtCore.QByteArray(self.cover_byte))
             self.label_cover.clear()
             self.label_cover.setPixmap(self.cover)
-            self.check_has_txt()
+            if not self.pushButton_start_build.isEnabled():
+                self.check_has_txt()
 
     def check_has_txt(self):
         if self.title + ".txt" in os.listdir(self.txt_folder):
@@ -151,10 +152,10 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
         text = neattxt.get_neat_txt(self.file_path, self.title, self.txt_folder).split("\n")
         txt2html.format_txt(self.title, self.author, text, self.description, self.chr_pattern)
-        self.message.emit('arrange is done')
+        self.message.emit('format is done')
         strucreat.structure(self.description, self.chr_pattern)
-        self.message.emit('structure is done')
         epubzip.epubzip('epubobject', self.title)
+        self.message.emit('structure is done')
         arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
         self.message.emit('arrange is done')
         self.file_path = self.txt_folder + os.sep + self.title + '.txt'
