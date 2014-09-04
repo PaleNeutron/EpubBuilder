@@ -23,7 +23,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
     def __init__(self):
         super(BuilderUI, self).__init__()
         if sys.platform == "win32":
-            self.editor_path = "notepad"
+            self.editor_path = r"C:\Program Files (x86)\Notepad++\notepad++.exe"
         elif sys.platform == "linux":
             self.editor_path = "gvim"
             # self.editor_path = "subl"
