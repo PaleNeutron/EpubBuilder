@@ -1,11 +1,10 @@
-#!/opt/python3.4.1/bin/python3
 import urllib.parse
 import os
 import subprocess
 
-import TinyEpub
-from PySide import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
+import TinyEpub
 import ui_mainwindow
 import my_mainwindow
 import web_info
@@ -18,14 +17,14 @@ import messager
 
 
 class BuilderUI(ui_mainwindow.Ui_MainWindow):
-    """the mainUI for EpubBuilder, contains the signal and slot"""
+    """the mainUI for EpubBuilder, contains the signal and.pyqtSlot"""
 
     def __init__(self):
         super(BuilderUI, self).__init__()
         if sys.platform == "win32":
             self.editor_path = "notepad"
         elif sys.platform == "linux":
-            self.editor_path = "gvim"
+            self.editor_path = "kate"
             # self.editor_path = "subl"
 
         self.file_path = ''
@@ -65,7 +64,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     # #self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
 
-    @QtCore.Slot(str)
+    @QtCore.pyqtSlot(str)
     def load_file(self, file_path):
         if file_path.endswith(".txt"):
             self.file_path = file_path
@@ -76,7 +75,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.lineEdit_title.setText(self.title)
         self.check_has_txt()
 
-    @QtCore.Slot(str)
+    @QtCore.pyqtSlot(str)
     def to_bookpage(self, title):
         p = True
         for c in title:
@@ -171,8 +170,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
 if __name__ == '__main__':
     import sys
+    # fix a bug in pyqt5
+    if sys.platform == "win32":
+        os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.dirname(QtCore.__file__) + "/plugins/platforms"
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ui = BuilderUI()
     ui.main_window.show()
     sys.exit(app.exec_())

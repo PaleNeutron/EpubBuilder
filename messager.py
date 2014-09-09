@@ -1,9 +1,9 @@
 __author__ = 'paleneutron'
-from PySide import QtCore
+from PyQt5 import QtCore
 
 
 class Messenger(QtCore.QObject):
-    msg = QtCore.Signal(str)
+    msg = QtCore.pyqtSignal(str)
 
     def __init__(self):
         super(Messenger, self).__init__()

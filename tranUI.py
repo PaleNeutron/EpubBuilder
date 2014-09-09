@@ -1,12 +1,12 @@
 __author__ = 'PaleNeutron'
 import os
 import subprocess
-import importlib
+import importlib.util
 import sys
 # from distutils.sysconfig import get_python_lib
-PySide_path = os.path.dirname(importlib.find_loader("PySide").path)
-uic_path = sys.exec_prefix + os.sep + "bin" + os.sep + "pyside-uic"
-rcc_path = PySide_path + os.sep + "pyside-rcc"
+PyQt_path = os.path.dirname(importlib.util.find_spec("PyQt5").origin)
+uic_path = sys.exec_prefix + os.sep + "bin" + os.sep + "pyuic5"
+rcc_path = PyQt_path + os.sep + "pyrcc"
 
 for root, dirs, files in os.walk('.'):
     for file in files:

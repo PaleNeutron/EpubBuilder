@@ -3,11 +3,11 @@ import os
 from urllib.parse import urlparse, unquote
 import sys
 
-from PySide import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore
 
 
-class MyMainWindow(QtGui.QMainWindow):
-    file_loaded = QtCore.Signal(str)
+class MyMainWindow(QtWidgets.QMainWindow):
+    file_loaded = QtCore.pyqtSignal(str)
 
     def __init__(self):
         super(MyMainWindow, self).__init__()
@@ -19,7 +19,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.create_content_browser()
 
     def create_content_browser(self):
-        self.content_browser = QtGui.QTextBrowser()
+        self.content_browser = QtWidgets.QTextBrowser()
         self.content_browser.setGeometry(QtCore.QRect(300, 150, 600, 400))
         self.windowList.append(self.content_browser)
 
@@ -54,8 +54,8 @@ class MyMainWindow(QtGui.QMainWindow):
         # print(i)
         # if ev.mimeData().hasFormat(self.win_file_mime):
         # ev.accept()
-        #     file_path = bytes(ev.mimeData().data(self.win_file_mime).data())[:-2].decode('utf16')
-        #     if file_path.endswith(".txt"):
+        # file_path = bytes(ev.mimeData().data(self.win_file_mime).data())[:-2].decode('utf16')
+        # if file_path.endswith(".txt"):
         #         self.text_loaded(file_path)
         #     elif file_path.endswith(".jpg") or file_path.endswith(".jpeg") or file_path.endswith(".png"):
         #         self.image_loaded(file_path)
@@ -63,7 +63,7 @@ class MyMainWindow(QtGui.QMainWindow):
         #         self.epub_loaded(file_path)
         #         print(file_path)
         if ev.mimeData().hasFormat(self.text_uri_mime):
-            uri = str(ev.mimeData().data(self.text_uri_mime)).strip()
+            uri = ev.mimeData().data(self.text_uri_mime).data().decode("utf8").strip()
 
             if uri.endswith(".txt") or uri.endswith(".epub"):
                 file_path = self.uri_to_path(uri)

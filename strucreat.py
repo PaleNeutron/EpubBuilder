@@ -33,16 +33,16 @@ def structure(description, chrpattern):
     if os.path.exists('./style') and not os.path.exists(r'epubobject/OEBPS/style'):
         shutil.copytree(r'./style', r'epubobject/OEBPS/style')
 
-    #Creatt the Book Files
+    # Creatt the Book Files
     f = open('index.html', 'r', encoding='UTF-8')
     html_doc = f.readlines()
     f.close()
 
-    book_title = html_doc[0]  #后面构建opf文件时用
+    book_title = html_doc[0]  # 后面构建opf文件时用
     book_title = book_title.replace('\n', '')
-    book_author = html_doc[1]  #后面构建opf文件时用
+    book_author = html_doc[1]  # 后面构建opf文件时用
     book_author = book_author.replace('\n', '')
-    chap_title_list = []  #构建一个list，存放章节标题，后面构建toc.ncx时用
+    chap_title_list = []  # 构建一个list，存放章节标题，后面构建toc.ncx时用
     title_line_nums = []
     style_con = ''
 
@@ -76,7 +76,7 @@ def structure(description, chrpattern):
         chap_out.write(chap_out_pre)
         chap_out.close()
 
-    #Creat The Book Files↑↑↑↑
+    # Creat The Book Files↑↑↑↑
 
     #Build the opf file
 

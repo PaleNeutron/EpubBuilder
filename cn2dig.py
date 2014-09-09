@@ -16,19 +16,19 @@ CN_UNIT = {'十': 10, '拾': 10, '百': 100, '佰': 100, '千': 1000, '仟': 100
 
 def cn2dig(cn):
     lcn = list(cn)
-    unit = 0  #当前的单位
-    ldig = []  #临时数组
+    unit = 0  # 当前的单位
+    ldig = []  # 临时数组
     while lcn:
         cndig = lcn.pop()
         if cndig in CN_UNIT:
             unit = CN_UNIT.get(cndig)
             if unit == 10000:
-                ldig.append('w')  #标示万位
+                ldig.append('w')  # 标示万位
                 unit = 1
             elif unit == 100000000:
-                ldig.append('y')  #标示亿位
+                ldig.append('y')  # 标示亿位
                 unit = 1
-            elif unit == 1000000000000:  #标示兆位
+            elif unit == 1000000000000:  # 标示兆位
                 ldig.append('z')
                 unit = 1
             continue
@@ -38,9 +38,9 @@ def cn2dig(cn):
                 dig = dig * unit
                 unit = 0
             ldig.append(dig)
-    if unit == 10:  #处理10-19的数字
+    if unit == 10:  # 处理10-19的数字
         ldig.append(10)
-        #print ldig #uncomment this line to watch the middle var.
+        # print ldig #uncomment this line to watch the middle var.
     ret = 0
     tmp = 0
     while ldig:
@@ -62,9 +62,9 @@ def cn2dig(cn):
     ret += tmp
     return ret
 
-#ldig.reverse()
-#print ldig
-#print CN_NUM[u'七']
+# ldig.reverse()
+# print ldig
+# print CN_NUM[u'七']
 
 
 if __name__ == '__main__':

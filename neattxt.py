@@ -2,7 +2,6 @@ import re
 import os
 
 import hxchange
-
 import messager
 
 
@@ -47,5 +46,5 @@ def get_neat_txt(route, title, txt_folder):
 # text = get_neat_txt(route, title, txt_folder).split("\n")
 # txt2html.BuildEpub(title, author, text, description, chr_pattern)
 # strucreat.structure(description, chr_pattern)
-#     epubzip.epubzip('epubobject', title)
-#     arrange.arrange(route, title)
+# epubzip.epubzip('epubobject', title)
+# arrange.arrange(route, title)
