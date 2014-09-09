@@ -1,11 +1,12 @@
 import re
 import os
+import sys
 
 import hxchange
 import messager
 
 
-message = messager.message
+message = messager.statusbar_message
 
 
 def get_neat_txt(route, title, txt_folder):
@@ -25,6 +26,7 @@ def get_neat_txt(route, title, txt_folder):
             message.emit("encoding is not" + coding_list[i])
             if i == len(coding_list) - 1:
                 raise IOError("can't read text file")
+    messager.process_message.emit(messager.process_rate_list[1])  # 进度1
     text = re.sub(r'^[ 　\t]+', '', text, flags=re.M)  # 去除行首的半角或全角空格以及制表符
     text = re.sub(r'<.{1,200}>.{1,50}<.{1,200}>', '', text)
     text = re.sub(r'<.{1,200}>', '', text)
@@ -35,9 +37,15 @@ def get_neat_txt(route, title, txt_folder):
     text = re.sub('^正文[ 　\t]*', '', text, flags=re.M)
     text = hxchange.change(text)
     text = text.replace('\n\n', '\n')
+    if sys.stdout.encoding == "cp936":
+        output_encoding = "gb18030"
+    else:
+        output_encoding = sys.stdout.encoding
 
-    with open(txt_folder + os.sep + title + '.txt', 'w') as f:
+    with open(txt_folder + os.sep + title + '.txt', 'w', encoding=output_encoding) as f:
         f.write(text)
+
+    messager.process_message.emit(messager.process_rate_list[2])  #进度2
     return text
 
 

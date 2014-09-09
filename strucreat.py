@@ -4,6 +4,7 @@ import shutil
 import uuid
 
 import tmp
+import messager
 
 
 def structure(description, chrpattern):
@@ -51,8 +52,10 @@ def structure(description, chrpattern):
             title_line_nums.append(i)
         elif '<link rel=\"stylesheet\"' in html_doc[i]:
             style_con = html_doc[i]
+        messager.process_message.emit(messager.get_rate(4, i / len(html_doc)))
 
     for j in range(0, len(title_line_nums)):
+        messager.process_message.emit(messager.get_rate(5, j / len(title_line_nums)))
         chap_title = html_doc[title_line_nums[j]]  # 取得章节标题
         chap_title = chap_title.replace('\n', '')  # 去除换行符
         chap_title_list.append(chap_title)  # 存放每章标题，后面toc.ncx用
@@ -160,7 +163,6 @@ def structure(description, chrpattern):
     ncx_out = open('epubobject/OEBPS/toc.ncx', 'w', encoding='UTF-8')
     ncx_out.write(ncx_out_pre)
     ncx_out.close()
-    print('sturcture is done')
 
 
 if __name__ == '__main__':

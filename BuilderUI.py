@@ -42,7 +42,8 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.image_folder = "./images"
         self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
         self.book_info = web_info.WebInfo()
-        self.message = messager.message
+        self.message = messager.statusbar_message
+        self.rate = messager.process_message
         self.main_window = my_mainwindow.MyMainWindow()
         self.setupUi(self.main_window)
 
@@ -55,7 +56,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.radioButton_chuangshi.clicked.connect(self.choose_site)
         self.radioButton_zongheng.clicked.connect(self.choose_site)
         self.message.connect(self.statusbar.showMessage)
-        self.progressBar.setValue(messager.process_rate)
+        self.rate.connect(self.progressBar.setValue)
 
     def ensure_directory(self, *dir_list):
         for d in dir_list:
@@ -155,6 +156,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.message.emit('structure is done')
         epubzip.epubzip('epubobject', self.title)
         arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
+        messager.process_message.emit(100)
         self.message.emit('arrange is done')
         self.file_path = self.txt_folder + os.sep + self.title + '.txt'
 

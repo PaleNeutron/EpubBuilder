@@ -1,5 +1,7 @@
 import re
 
+import messager
+
 
 def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章.{0,20}$)'):
     # images = os.listdir('images')
@@ -27,6 +29,8 @@ def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}�
                 mark = i
         elif len(rawread[i]) > 2:
             read.append('<p>' + rawread[i] + '</p>\n')
+
+        messager.process_message.emit(messager.get_rate(3, i / (len(rawread) - 1)))
     read[-1] = '<p>' + read[-1] + '</p>\n'  # 添加html标签
     description = description.replace("\n", "</p><p>")
     read = [title + '\n', author + '\n', '<title>封面</title>\n', '<img src="images/cover.jpg" />\n',
@@ -44,5 +48,3 @@ def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}�
     with open('contents.txt', 'w', encoding='UTF-8') as contents_out:
         contents_out.writelines(contents)
         # #输出章节名用于检查
-
-    print('format is done')

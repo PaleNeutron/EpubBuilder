@@ -21,7 +21,7 @@ class WebInfo(FancyURLopener):
         self.score = None
         self.cover_href = None
         self.cover = None
-        self.message = messager.message
+        self.message = messager.statusbar_message
 
         self.url = url
         if self.url:

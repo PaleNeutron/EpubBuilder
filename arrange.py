@@ -4,7 +4,7 @@ import shutil
 import messager
 
 
-message = messager.message
+message = messager.statusbar_message
 
 
 def arrange(route, txt_folder, epub_folder, title):
