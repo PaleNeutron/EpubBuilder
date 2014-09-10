@@ -24,7 +24,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         if sys.platform == "win32":
             self.editor_path = "notepad"
         elif sys.platform == "linux":
-            self.editor_path = "kate"
+            self.editor_path = "gedit"
             # self.editor_path = "subl"
 
         self.file_path = ''
@@ -41,7 +41,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.epub_folder = os.path.expanduser('~/Documents/epub')
         self.image_folder = "./images"
         self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
-        self.book_info = web_info.WebInfo()
+        self.book_info = web_info.BookInfo()
         self.message = messager.statusbar_message
         self.rate = messager.process_message
         self.main_window = my_mainwindow.MyMainWindow()
@@ -81,17 +81,26 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         p = True
         for c in title:
             p = p and (c in "1234567890")
-        if p and len(title) < 8:
-            url = "http://www.qidian.com/Book/%s.aspx" % title
-        elif p and len(title) >= 8:
-            url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % title
+        if p:
+            self.bookid = title
+            if len(self.bookid) < 8:  # 目前的判断规则没法直接从文件名区别是起点还是纵横，甚至有时候几乎不能自行分清起点和创世
+                url = "http://www.qidian.com/Book/%s.aspx" % self.bookid
+            else:
+                url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % self.bookid  #警告！网址中的ls是"历史"的含义，虽不影响使用，但是十分危险
         else:
             url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
         self.lineEdit_bookpage.setText(url)
 
     def choose_site(self):
         sender = self.main_window.sender()
-        self.statusbar.showMessage(repr(sender))
+        url = ''
+        if sender is self.radioButton_chuangshi:
+            url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % self.bookid
+        elif sender is self.radioButton_qidian:
+            url = "http://www.qidian.com/Book/%s.aspx" % self.bookid
+        elif sender is self.radioButton_zongheng:
+            url = "http://book.zongheng.com/book/%s.html" % self.bookid
+        self.lineEdit_bookpage.setText(url)
 
     def edit_text(self):
         subprocess.Popen([self.editor_path, self.file_path])

@@ -41,7 +41,7 @@ with open("书评.xml", "w", encoding="UTF-8") as f:
         print(title)
         subprocess.Popen([r"C:\Program Files (x86)\Notepad++\notepad++.exe", shelf_dir + book])
         url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
-        info = web_info.WebInfo(url)
+        info = web_info.BookInfo(url)
         if info.author:
             author = info.author
             lkong_score = info.score

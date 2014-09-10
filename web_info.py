@@ -7,26 +7,31 @@ import bs4
 import messager
 
 
-class WebInfo(FancyURLopener):
+class DeceptionOpener(FancyURLopener):
+    def __init__(self):
+        super(DeceptionOpener, self).__init__()
+        self.version = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'
+        self.protocol = "http://"
+        # #        self.proxies = {'http':'http://202.112.26.250:8080'} #使用SJTU的代理
+
+
+class BookInfo(DeceptionOpener):
     """grab all the book information from a specific website"""
 
     def __init__(self, url=None):
-        super(WebInfo, self).__init__()
-        self.version = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'
-        protocol = "http://"
-        # #        self.proxies = {'http':'http://202.112.26.250:8080'} #使用SJTU的代理
+        super(BookInfo, self).__init__()
         self.title = None
         self.author = None
         self.description = None
         self.score = None
         self.cover_href = None
         self.cover = None
-        self.message = messager.statusbar_message
 
         self.url = url
+        # 确定访问的协议为http
         if self.url:
-            if not self.url[0:len(protocol)] == protocol:
-                self.url = protocol + self.url
+            if not self.url[0:len(self.protocol)] == self.protocol:
+                self.url = self.protocol + self.url
             self.open_page()
 
     def open_page(self):
@@ -34,21 +39,31 @@ class WebInfo(FancyURLopener):
             self.response = self.open(self.url)
         except OSError as err:
             if err.errno == 'socket error':
-                self.message.emit("please check url or website is busy")
+                messager.statusbar_message.emit("please check url or website is busy")
         if self.response.getcode() == 200:
             self.analyse_page()
         elif self.response.getcode() == 404:
-            self.message.emit("ERROR 404, page not found")
+            messager.statusbar_message.emit("ERROR 404, page not found")
         else:
-            self.message.emit(self.response.getcode())
+            messager.statusbar_message.emit(self.response.getcode())
 
     def analyse_page(self):
         self.info = self.response.info()
-        self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'))
+        self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'),
+                                      "html5lib")
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             if self.soup.find("div", {"class": "alert_info"}):
-                self.message.emit("book not in lkong")
+                messager.statusbar_message.emit("book not in lkong, guess if in chuangshi")
+                search_opener = DeceptionOpener()
+                bookname = self.url.replace('http://www.lkong.net/book.php?mod=view&bookname=', '')
+                search_result = search_opener.open(
+                    "http://chuangshi.qq.com/search/searchindex/type/all/value/%s.html" % bookname)
+                search_soup = bs4.BeautifulSoup(
+                    search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
+                newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
+                self.url = newurl
+                self.open_page()
             else:
                 bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
                 newhost = Request(bookpage).host
@@ -73,12 +88,9 @@ class WebInfo(FancyURLopener):
         if 'images' not in os.listdir('.') and self.cover_href:
             os.mkdir('images')
         if self.cover_href:
-            # with open(r'images/cover.jpg', 'wb') as f:
-            myopener = FancyURLopener()
-            myopener.version = self.version
+            myopener = DeceptionOpener()
             response = myopener.open(self.cover_href)
             self.cover = response.read()
-            # f.write(self.cover)
 
     def scan_lkong(self, url):
         self.title = self.soup.find('h1').string
@@ -94,7 +106,7 @@ class WebInfo(FancyURLopener):
         self.cover_href = self.soup.body.find("img", {"itemprop": "image"}).get("src")
 
     def scan_chuangshi(self, url):
-        title_line = self.soup.body.findAll("div", {"class": "title"})[1].getText().split(">\r\n            ")
+        title_line = self.soup.body.findAll("div", {"class": "title"})[1].getText().split('>\n')
         self.subject = title_line[1:3]
         self.title = title_line[3].strip()
         self.author = self.soup.find("div", {"class": "au_name"}).a.string.strip()
