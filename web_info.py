@@ -50,7 +50,7 @@ class BookInfo(DeceptionOpener):
     def analyse_page(self):
         self.info = self.response.info()
         self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'),
-                                      "html5lib")
+                                      "html.parser")
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             if self.soup.find("div", {"class": "alert_info"}):
@@ -106,7 +106,7 @@ class BookInfo(DeceptionOpener):
         self.cover_href = self.soup.body.find("img", {"itemprop": "image"}).get("src")
 
     def scan_chuangshi(self, url):
-        title_line = self.soup.body.findAll("div", {"class": "title"})[1].getText().split('>\n')
+        title_line = self.soup.body.findAll("div", {"class": "title"})[1].getText().split('>\r\n')
         self.subject = title_line[1:3]
         self.title = title_line[3].strip()
         self.author = self.soup.find("div", {"class": "au_name"}).a.string.strip()

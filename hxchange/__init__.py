@@ -1,15 +1,17 @@
 import re
-import pickle
-import os
 
-from . import hxlistBulider
+from . import hxlist
 
 
-package_dir = os.path.abspath(os.path.dirname(__file__))
-with open(package_dir + os.sep + 'purechr.pkl', 'rb') as f:
-    purechr = pickle.load(f)
-with open(package_dir + os.sep + 'chchr.pkl', 'rb') as f:
-    chchr = pickle.load(f)
+# package_dir = os.path.abspath(os.path.dirname(__file__))
+# with open(package_dir + os.sep + 'purechr.pkl', 'rb') as f:
+# purechr = pickle.load(f)
+# with open(package_dir + os.sep + 'chchr.pkl', 'rb') as f:
+#     chchr = pickle.load(f)
+
+
+purechr = hxlist.purechr
+chchr = hxlist.chchr
 
 
 def change(string, chchr=chchr, purechr=purechr):
@@ -20,15 +22,15 @@ def change(string, chchr=chchr, purechr=purechr):
     return string
 
 
-def changefile(route):
-    with open(route, encoding="gb18030") as f:
-        new_string = change(f.read())
-    with open(package_dir + os.sep + "bak.txt", "w", encoding="gb18030") as f:
-        f.write(new_string)
-    with open(route, "w", encoding="gb18030") as f:
-        f.write(new_string)
-    print("done")
-
-
-if __name__ == "__main__":
-    changefile(input("route is: "))
+# def changefile(route):
+    # with open(route, encoding="gb18030") as f:
+    #         new_string = change(f.read())
+    #     with open(package_dir + os.sep + "bak.txt", "w", encoding="gb18030") as f:
+    #         f.write(new_string)
+    #     with open(route, "w", encoding="gb18030") as f:
+    #         f.write(new_string)
+    #     print("done")
+    #
+    #
+    # if __name__ == "__main__":
+    #     changefile(input("route is: "))
