@@ -71,7 +71,7 @@ class MyMainWindow(QtWidgets.QMainWindow):
 
             elif uri.endswith(".zip"):
                 #打开一个zip文档，获取其中的txt
-                zip_path = unquote(urlparse(uri).path)
+                zip_path = self.uri_to_path(uri)
                 import zipfile
 
                 zf = zipfile.ZipFile(zip_path)
@@ -79,6 +79,18 @@ class MyMainWindow(QtWidgets.QMainWindow):
                     #如果文档中txt文件大于10kb则解压到当前文件夹
                     if filename.endswith(".txt") and zf.getinfo(filename).file_size > 10 * 1024:
                         zf.extract(filename)
+                        # 发送文件位置信号
+                    self.load_file(os.curdir + os.sep + filename)
+                    break
+            elif uri.endswith(".rar"):
+                rar_path = self.uri_to_path(uri)
+                import rarfile
+
+                rf = rarfile.RarFile(rar_path)
+                for filename in rf.namelist():
+                    # 如果文档中txt文件大于10kb则解压到当前文件夹
+                    if filename.endswith(".txt") and rf.getinfo(filename).file_size > 10 * 1024:
+                        rf.extract(filename)
                         #发送文件位置信号
                     self.load_file(os.curdir + os.sep + filename)
                     break
