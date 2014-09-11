@@ -63,8 +63,6 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
             if not os.path.isdir(d):
                 os.makedirs(d)
 
-    # #self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
-
     @QtCore.pyqtSlot(str)
     def load_file(self, file_path):
         if file_path.endswith(".txt"):
@@ -116,8 +114,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.description = book.description
         self.chr_pattern = book.chrpattern
         self.cover_byte = book.cover
-        line = self.comboBox_re.lineEdit()
-        line.setText(self.chr_pattern)
+        self.comboBox_re.lineEdit().setText(self.chr_pattern)
         self.lineEdit_title.setText(self.title)
         self.lineEdit_author.setText(self.author)
         self.textEdit_chapter.setDocument(QtGui.QTextDocument(self.description))
