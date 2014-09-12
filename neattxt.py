@@ -10,7 +10,7 @@ message = messager.statusbar_message
 
 
 def get_neat_txt(route, title, txt_folder):
-    coding_list = ("utf8", "gb18030")
+    coding_list = ("gb18030", "utf8")
     with open(route, 'rb') as f:
         r1 = f.read()
         r2 = re.sub(rb'www.{0,20}(?:com|cn|org|net)', b'', r1)  # 有些txt中有随意插入的网址，会导致文本乱码，在bytes模式下清除
@@ -25,7 +25,12 @@ def get_neat_txt(route, title, txt_folder):
         except UnicodeDecodeError:
             message.emit("encoding is not" + coding_list[i])
             if i == len(coding_list) - 1:
+                messager.statusbar_message.emit("can't read text file")
                 raise IOError("can't read text file")
+    if len(text) < 10:
+        messager.statusbar_message.emit("txt is wrong!")
+        raise IOError("can't read correct text file")
+
     messager.process_message.emit(messager.process_rate_list[1])  # 进度1
     text = re.sub(r'^[ 　\t]+', '', text, flags=re.M)  # 去除行首的半角或全角空格以及制表符
     text = re.sub(r'<.{1,200}>.{1,50}<.{1,200}>', '', text)

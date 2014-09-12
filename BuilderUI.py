@@ -40,7 +40,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.txt_folder = os.path.expanduser('~/Documents/txt')
         self.epub_folder = os.path.expanduser('~/Documents/epub')
         self.image_folder = "./images"
-        self.ensure_directory(self.txt_folder, self.epub_folder, self.image_folder)
+        self.ensure_directory(self.txt_folder, self.epub_folder)
         self.book_info = web_info.BookInfo()
         self.message = messager.statusbar_message
         self.rate = messager.process_message
@@ -182,9 +182,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 if __name__ == '__main__':
     import sys
     # fix a bug in pyqt5
-    if sys.platform == "win32":
-        os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.dirname(QtCore.__file__) + "/plugins/platforms"
-
+    # if sys.platform == "win32":
+    # os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.dirname(QtCore.__file__) + "/plugins/platforms"
+    # it doesn't work on another machine without pyqt installed. Copy libEGL.dll to the work dir will fix it.
+    err_log = open("error.log", "a")  #redirct STDERR
+    sys.stderr = err_log
     app = QtWidgets.QApplication(sys.argv)
     ui = BuilderUI()
     ui.main_window.show()
