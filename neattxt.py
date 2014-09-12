@@ -1,6 +1,5 @@
 import re
 import os
-import sys
 
 import hxchange
 import messager
@@ -42,12 +41,8 @@ def get_neat_txt(route, title, txt_folder):
     text = re.sub('^正文[ 　\t]*', '', text, flags=re.M)
     text = hxchange.change(text)
     text = text.replace('\n\n', '\n')
-    if sys.stdout.encoding == "cp936":
-        output_encoding = "gb18030"
-    else:
-        output_encoding = sys.stdout.encoding
 
-    with open(txt_folder + os.sep + title + '.txt', 'w', encoding=output_encoding) as f:
+    with open(txt_folder + os.sep + title + '.txt', 'w', encoding='utf8') as f:
         f.write(text)
 
     messager.process_message.emit(messager.process_rate_list[2])  #进度2
