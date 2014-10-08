@@ -8,7 +8,6 @@ message = messager.statusbar_message
 
 
 def arrange(file_path, txt_folder, epub_folder, title):
-    print(file_path)
     shutil.rmtree('epubobject')
     # 将epub移动到epub_folder中去,如果已经存在则覆盖之
     if os.path.exists(epub_folder + os.sep + title + '.epub'):
