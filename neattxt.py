@@ -1,11 +1,7 @@
 import re
-import os
 
 import hxchange
 import messager
-
-
-message = messager.statusbar_message
 
 
 def get_neat_txt(route, title, txt_folder):
@@ -22,7 +18,7 @@ def get_neat_txt(route, title, txt_folder):
                 text = source.read()
             break
         except UnicodeDecodeError:
-            message.emit("encoding is not" + coding_list[i])
+            messager.statusbar_message.emit("encoding is not " + coding_list[i])
             if i == len(coding_list) - 1:
                 messager.statusbar_message.emit("can't read text file")
                 raise IOError("can't read text file")
@@ -30,7 +26,7 @@ def get_neat_txt(route, title, txt_folder):
         messager.statusbar_message.emit("txt is wrong!")
         raise IOError("can't read correct text file")
 
-    messager.process_message.emit(messager.process_rate_list[1])  # 进度1
+    # messager.process_message.emit(messager.process_rate_list[1])  # 进度1
     text = re.sub(r'^[ 　\t]+', '', text, flags=re.M)  # 去除行首的半角或全角空格以及制表符
     text = re.sub(r'<.{1,200}>.{1,50}<.{1,200}>', '', text)
     text = re.sub(r'<.{1,200}>', '', text)
@@ -42,10 +38,10 @@ def get_neat_txt(route, title, txt_folder):
     text = hxchange.change(text)
     text = text.replace('\n\n', '\n')
 
-    with open(txt_folder + os.sep + title + '.txt', 'w', encoding='utf8') as f:
-        f.write(text)
+    # with open(txt_folder + os.sep + title + '.txt', 'w', encoding='utf8') as f:
+    # f.write(text)
 
-    messager.process_message.emit(messager.process_rate_list[2])  #进度2
+    # messager.process_message.emit(messager.process_rate_list[2])  #进度2
     return text
 
 

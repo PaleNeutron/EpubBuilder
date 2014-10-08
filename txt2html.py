@@ -1,9 +1,10 @@
 import re
+import os
 
 import messager
 
 
-def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}章.{0,20}$)'):
+def format_txt(title, author, rawread, description, txt_folder, rule=r'(^.{0,20}第.{0,10}章.{0,20}$)'):
     # images = os.listdir('images')
     # if len(images) > 1:
     # os.remove('images\\cover.jpg')
@@ -17,6 +18,8 @@ def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}�
     contents = []
     mark = -10
     read = []
+    # 打开临时文档，用于存放格式化的数据
+    temp_file = open(txt_folder + os.sep + "temp", 'w', encoding='utf8', errors="replace")
     ##读取文档
     for i in range(len(rawread) - 1):
         a = re.search(rule, rawread[i])
@@ -25,13 +28,16 @@ def format_txt(title, author, rawread, description, rule=r'(^.{0,20}第.{0,10}�
                 old = a.group()
                 new = '<title>' + old + '</title>' + '\n' + '<h1>' + old + '</h1>\n'
                 read.append(new)
+                temp_file.write(old + '\n')
                 contents.append(old + '\t\t' + str(round(i * 100 / len(rawread), 1)) + '\n')  # 添加目录信息以及当前章节百分比
                 mark = i
         elif len(rawread[i]) > 2:
             read.append('<p>' + rawread[i] + '</p>\n')
+            temp_file.write('    ' + rawread[i] + '\n')
 
         messager.process_message.emit(messager.get_rate(3, i / (len(rawread) - 1)))
     read[-1] = '<p>' + read[-1] + '</p>\n'  # 添加html标签
+    temp_file.write(read[-1] + '\n')
     description = description.replace("\n", "</p><p>")
     read = [title + '\n', author + '\n', '<title>封面</title>\n', '<img src="images/cover.jpg" />\n',
             '<p>' + title + '</p>\n', '<p>' + author + '</p>\n', '<p>' + description + "**********" + '</p>\n'] + read

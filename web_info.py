@@ -9,6 +9,7 @@ import messager
 
 class DeceptionOpener(FancyURLopener):
     """decorate the FancyURLopener as an simple browser"""
+
     def __init__(self):
         super(DeceptionOpener, self).__init__()
         self.version = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'
@@ -27,15 +28,13 @@ class BookInfo(DeceptionOpener):
         self.score = None
         self.cover_href = None
         self.cover = None
-
         self.url = url
+
+    def open_page(self):
         # 确定访问的协议为http
         if self.url:
             if not self.url[0:len(self.protocol)] == self.protocol:
                 self.url = self.protocol + self.url
-            self.open_page()
-
-    def open_page(self):
         try:
             self.response = self.open(self.url)
         except OSError as err:
@@ -47,6 +46,7 @@ class BookInfo(DeceptionOpener):
             messager.statusbar_message.emit("ERROR 404, page not found")
         else:
             messager.statusbar_message.emit(self.response.getcode())
+        messager.page_opened.emit()
 
     def analyse_page(self):
         self.info = self.response.info()

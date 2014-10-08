@@ -1,6 +1,14 @@
 import zipfile
+from multiprocessing import Pool
 
 import bs4
+
+
+def char2text(i):
+    soup = bs4.BeautifulSoup(i)
+    chapter = soup.body.getText().splitlines()
+    chapter = "\n".join(chapter).strip() + "\n\n"
+    return chapter
 
 
 class Epub(zipfile.ZipFile):
@@ -23,13 +31,28 @@ class Epub(zipfile.ZipFile):
         elif mode == 'w':
             pass
 
-    def epub2txt(self):
-        tempread = ""
-        for i in self.namelist():
+    def get_text(self):
+        self.tempread = ""
+        charlist = self.readall(self.namelist())
+        with Pool(4) as pool:
+            txtlist = pool.map(char2text, charlist)
+        self.tempread = "".join(txtlist)
+        return self.tempread
+
+    def readall(self, namelist):
+        charlist = []
+        for i in namelist:
             if i.startswith('OEBPS/') and i.endswith('.xhtml'):
-                soup = bs4.BeautifulSoup(self.read(i).decode())
-                chapter = soup.body.getText()[1:].splitlines()
-                chapter = "\n\t".join(chapter) + "\n\n"
-                tempread += chapter
+                r = self.read(i).decode()
+                charlist.append(r)
+        return charlist
+
+    def epub2txt(self):
+        tempread = self.get_text()
         with open(self.title + '.txt', 'w', encoding='utf8') as f:
             f.write(tempread)
+
+
+if __name__ == "__main__":
+    e = Epub("assz.epub")
+    e.epub2txt()

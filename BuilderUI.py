@@ -47,7 +47,10 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.main_window = my_mainwindow.MyMainWindow()
         self.setupUi(self.main_window)
 
-        self.pushButton_get_info.clicked.connect(self.get_info)
+        self.open_url_thread = WorkThread(self.open_url)
+        self.build_thread = WorkThread(self.generate_epub)
+
+        self.pushButton_get_info.clicked.connect(self.open_url_thread.start)
         self.lineEdit_title.textChanged.connect(self.to_bookpage)
         self.pushButton_start_build.clicked.connect(self.build)
         self.pushButton_edit_text.clicked.connect(self.edit_text)
@@ -57,6 +60,9 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.radioButton_zongheng.clicked.connect(self.choose_site)
         self.message.connect(self.statusbar.showMessage)
         self.rate.connect(self.progressBar.setValue)
+        messager.page_opened.connect(self.get_info)
+        messager.finished.connect(self.finish_build)
+        messager.text_neated.connect(self.reset_progressbar)
 
     def ensure_directory(self, *dir_list):
         for d in dir_list:
@@ -71,8 +77,8 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
             self.load_text()
         else:
             self.load_epub(file_path)
+            self.check_has_txt()
         self.lineEdit_title.setText(self.title)
-        self.check_has_txt()
 
     @QtCore.pyqtSlot(str)
     def to_bookpage(self, title):
@@ -122,9 +128,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.label_cover.clear()
         self.label_cover.setPixmap(self.cover)
 
-    def get_info(self):
+    def open_url(self):
         self.book_info.url = self.lineEdit_bookpage.text()
         self.book_info.open_page()
+
+    def get_info(self):
         if self.book_info.title:
             self.title = self.book_info.title
             self.author = self.book_info.author
@@ -154,18 +162,25 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         if not self.cover.isNull():
             self.cover.save(os.getcwd() + '/images/cover.jpg')
         self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
+        self.progressBar.setMaximum(0)
+        self.progressBar.setMinimum(0)
+        self.build_thread.start()
 
+    def generate_epub(self):
         text = neattxt.get_neat_txt(self.file_path, self.title, self.txt_folder).split("\n")
-        txt2html.format_txt(self.title, self.author, text, self.description, self.chr_pattern)
-        self.message.emit('arrange is done')
+        messager.text_neated.emit()
+        txt2html.format_txt(self.title, self.author, text, self.description, self.txt_folder, self.chr_pattern)
+        self.message.emit('split is done')
         strucreat.structure(self.description, self.chr_pattern)
         self.message.emit('structure is done')
         epubzip.epubzip('epubobject', self.title)
         arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
         messager.process_message.emit(100)
         self.message.emit('arrange is done')
-        self.file_path = self.txt_folder + os.sep + self.title + '.txt'
+        messager.finished.emit()
 
+    def finish_build(self):
+        self.file_path = self.txt_folder + os.sep + self.title + '.txt'
         self.show_contents()
 
     def show_contents(self):
@@ -174,6 +189,19 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         # self.main_window.content_browser.clear()
         self.main_window.content_browser.setText(r)
         self.main_window.content_browser.show()
+
+    def reset_progressbar(self):
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(100)
+
+
+class WorkThread(QtCore.QThread):
+    def __init__(self, function):
+        super(WorkThread, self).__init__()
+        self.function = function
+
+    def run(self):
+        self.function()
 
 
 if __name__ == '__main__':
