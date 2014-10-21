@@ -22,6 +22,12 @@ def change(string, chchr=chchr, purechr=purechr):
     return string
 
 
+def smart_change(string):
+    if string.count("yan") + string.count("jiān") + string.count("yàn") + string.count("chao") > 3:
+        return change(string)
+    else:
+        return string
+
 # def changefile(route):
     # with open(route, encoding="gb18030") as f:
     #         new_string = change(f.read())

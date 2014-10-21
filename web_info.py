@@ -66,6 +66,7 @@ class BookInfo(DeceptionOpener):
                 self.url = newurl
                 self.open_page()
             else:
+                self.scan_lkong(self.url)
                 bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
                 newhost = Request(bookpage).host
                 if newhost == 'www.qidian.com':
@@ -74,8 +75,8 @@ class BookInfo(DeceptionOpener):
                 elif newhost == 'book.zongheng.com':
                     self.url = bookpage.replace("showchapter", "book")
                     self.open_page()
-                else:
-                    self.scan_lkong(self.url)
+                    # else:
+                    # self.scan_lkong(self.url)
 
 
         elif self.host == "chuangshi.qq.com":

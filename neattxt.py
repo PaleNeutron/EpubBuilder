@@ -35,7 +35,7 @@ def get_neat_txt(route, title, txt_folder):
     text = text.replace('520小说', '书')
     text = text.replace('520xs', '')
     text = re.sub('^正文[ 　\t]*', '', text, flags=re.M)
-    text = hxchange.change(text)
+    text = hxchange.smart_change(text)
     text = text.replace('\n\n', '\n')
 
     # with open(txt_folder + os.sep + title + '.txt', 'w', encoding='utf8') as f:
@@ -52,3 +52,7 @@ def get_neat_txt(route, title, txt_folder):
 # strucreat.structure(description, chr_pattern)
 # epubzip.epubzip('epubobject', title)
 # arrange.arrange(route, title)
+if __name__ == '__main__':
+    import cProfile
+
+    cProfile.run("""get_neat_txt("琥珀之剑.txt","琥珀之剑","")""")

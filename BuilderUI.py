@@ -210,8 +210,8 @@ if __name__ == '__main__':
     # if sys.platform == "win32":
     # os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.dirname(QtCore.__file__) + "/plugins/platforms"
     # it doesn't work on another machine without pyqt installed. Copy libEGL.dll to the work dir will fix it.
-    err_log = open("error.log", "a")  #redirct STDERR
-    sys.stderr = err_log
+    # err_log = open("error.log", "a")  #redirct STDERR
+    # sys.stderr = err_log
     app = QtWidgets.QApplication(sys.argv)
     ui = BuilderUI()
     ui.main_window.show()

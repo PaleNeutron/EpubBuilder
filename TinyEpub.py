@@ -11,6 +11,10 @@ def char2text(i):
     return chapter
 
 
+def my_read(file_name):
+    with open(file_name) as f:
+        return f.read()
+
 class Epub(zipfile.ZipFile):
     def __init__(self, file, mode='r', compression=0, allowZip64=False):
         zipfile.ZipFile.__init__(self, file, mode, compression, allowZip64)
@@ -34,12 +38,22 @@ class Epub(zipfile.ZipFile):
     def get_text(self):
         self.tempread = ""
         charlist = self.readall(self.namelist())
-        with Pool(4) as pool:
+        # add = lambda x:x+1
+        with Pool() as pool:
+            # joke = pool.map(add, range(1000))
             txtlist = pool.map(char2text, charlist)
         self.tempread = "".join(txtlist)
         return self.tempread
 
     def readall(self, namelist):
+        charlist = []
+        for i in namelist:
+            if i.startswith('OEBPS/') and i.endswith('.xhtml'):
+                r = self.read(i).decode()
+                charlist.append(r)
+        return charlist
+
+    def get_namelist(self):
         charlist = []
         for i in namelist:
             if i.startswith('OEBPS/') and i.endswith('.xhtml'):
@@ -55,4 +69,6 @@ class Epub(zipfile.ZipFile):
 
 if __name__ == "__main__":
     e = Epub("assz.epub")
-    e.epub2txt()
+    import cProfile
+
+    cProfile.run("e.epub2txt()")
