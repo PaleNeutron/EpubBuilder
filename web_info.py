@@ -1,7 +1,7 @@
 __author__ = 'PaleNeutron'
 from urllib.request import FancyURLopener, Request
 import os
-
+from pyquery import PyQuery as pq
 import bs4
 
 import messager
@@ -50,8 +50,8 @@ class BookInfo(DeceptionOpener):
 
     def analyse_page(self):
         self.info = self.response.info()
-        self.soup = bs4.BeautifulSoup(self.response.read().decode(self.info.get_content_charset(), errors='ignore'),
-                                      "html.parser")
+        self.html = self.response.read().decode(self.info.get_content_charset(), errors='ignore')
+        self.soup = bs4.BeautifulSoup(self.html,"html.parser")
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             if self.soup.find("div", {"class": "alert_info"}):
@@ -59,7 +59,7 @@ class BookInfo(DeceptionOpener):
                 search_opener = DeceptionOpener()
                 bookname = self.url.replace('http://www.lkong.net/book.php?mod=view&bookname=', '')
                 search_result = search_opener.open(
-                    "http://chuangshi.qq.com/search/searchindex/type/all/value/%s.html" % bookname)
+                    "http://chuangshi.qq.com/search/searchindex?type=all&wd=%s" % bookname)
                 search_soup = bs4.BeautifulSoup(
                     search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
                 newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
@@ -108,13 +108,11 @@ class BookInfo(DeceptionOpener):
         self.cover_href = self.soup.body.find("img", {"itemprop": "image"}).get("src")
 
     def scan_chuangshi(self, url):
-        title_line = self.soup.body.findAll("div", {"class": "title"})[1].getText().split('>\r\n')
-        self.subject = title_line[1:3]
-        self.title = title_line[3].strip()
-        self.author = self.soup.find("div", {"class": "au_name"}).a.string.strip()
-        self.description = self.soup.find("div", {"class": "info"}).getText("\n")
-        self.cover_href = self.soup.find("div", {"class": "cover"}).a.img.get("src")
-
+        pg = pq(self.html)
+        self.title = pg('div.title:nth-child(1) > a:nth-child(2) > b:nth-child(1)').text()
+        self.author = pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
+        self.description = '\n'.join([i.text() for i in pg('.info p')])
+        self.cover_href = pg('.bookcover > img:nth-child(1)').attr('src')
     def scan_zongheng(self, url):
         fl = self.soup.body.find('div', {'class': 'status fl'})
         self.title = fl.h1.find("a", target=False).string.strip()
