@@ -36,24 +36,15 @@ class Epub(zipfile.ZipFile):
             pass
 
     def get_text(self):
-        self.tempread = ""
         charlist = self.readall(self.namelist())
         # add = lambda x:x+1
         with Pool() as pool:
             # joke = pool.map(add, range(1000))
             txtlist = pool.map(char2text, charlist)
-        self.tempread = "".join(txtlist)
-        return self.tempread
+        tempread = "".join(txtlist)
+        return tempread
 
     def readall(self, namelist):
-        charlist = []
-        for i in namelist:
-            if i.startswith('OEBPS/') and i.endswith('.xhtml'):
-                r = self.read(i).decode()
-                charlist.append(r)
-        return charlist
-
-    def get_namelist(self):
         charlist = []
         for i in namelist:
             if i.startswith('OEBPS/') and i.endswith('.xhtml'):
