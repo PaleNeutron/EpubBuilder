@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import urllib.parse
 import os
 import subprocess
@@ -24,8 +26,8 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         if sys.platform == "win32":
             self.editor_path = "notepad"
         elif sys.platform == "linux":
-            self.editor_path = "gedit"
-            # self.editor_path = "subl"
+            # self.editor_path = "gedit"
+            self.editor_path = "subl3"
 
         self.file_path = ''
         self.bookid = ''
