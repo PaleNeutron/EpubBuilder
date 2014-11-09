@@ -23,11 +23,11 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
 
     def __init__(self):
         super(BuilderUI, self).__init__()
+        # set open method depends on platform
         if sys.platform == "win32":
-            self.editor_path = "notepad"
+            self.system_open = "open"
         elif sys.platform == "linux":
-            # self.editor_path = "gedit"
-            self.editor_path = "subl3"
+            self.system_open = "xdg-open"
 
         self.file_path = ''
         self.bookid = ''

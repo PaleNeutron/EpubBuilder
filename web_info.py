@@ -111,7 +111,7 @@ class BookInfo(DeceptionOpener):
         pg = pq(self.html)
         self.title = pg('div.title:nth-child(1) > a:nth-child(2) > b:nth-child(1)').text()
         self.author = pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
-        self.description = '\n'.join([i.text() for i in pg('.info p')])
+        self.description = '\n'.join([pg(i).text() for i in pg('.info p')])
         self.cover_href = pg('.bookcover > img:nth-child(1)').attr('src')
     def scan_zongheng(self, url):
         fl = self.soup.body.find('div', {'class': 'status fl'})
