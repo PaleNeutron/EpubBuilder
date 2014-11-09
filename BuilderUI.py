@@ -109,7 +109,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.lineEdit_bookpage.setText(url)
 
     def edit_text(self):
-        subprocess.Popen([self.editor_path, self.file_path])
+        subprocess.Popen([self.system_open, self.file_path])
 
     def load_text(self):
         self.pushButton_start_build.setEnabled(True)
