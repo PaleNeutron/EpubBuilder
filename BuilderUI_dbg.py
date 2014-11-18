@@ -24,8 +24,15 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         # set open method depends on platform
         if sys.platform == "win32":
             self.system_open = "open"
+            from win32com.shell import shell, shellcon
+
+            mydocument_path = shell.SHGetFolderPath(0, shellcon.CSIDL_PERSONAL, None, 0)
+            self.txt_folder = mydocument_path + os.sep + 'txt'
+            self.epub_folder = mydocument_path + os.sep + 'epub'
         elif sys.platform == "linux":
             self.system_open = "xdg-open"
+            self.txt_folder = os.path.expanduser('~/Documents/txt')
+            self.epub_folder = os.path.expanduser('~/Documents/epub')
 
         self.file_path = ''
         self.bookid = ''
@@ -37,8 +44,6 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.cover_byte = b''
         self.cover = QtGui.QPixmap()
         self.mine_type = 'application/x-qt-windows-mime;value=\"FileNameW\"'
-        self.txt_folder = os.path.expanduser('~/Documents/txt')
-        self.epub_folder = os.path.expanduser('~/Documents/epub')
         self.image_folder = "./images"
         self.ensure_directory(self.txt_folder, self.epub_folder)
         self.book_info = web_info.BookInfo()
