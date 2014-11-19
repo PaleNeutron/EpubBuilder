@@ -83,17 +83,20 @@ class BookInfo(DeceptionOpener):
             self.scan_chuangshi(self.url)
         elif self.host == "www.qidian.com":
             self.scan_qidian(self.url)
-
         elif self.host == 'book.zongheng.com':
             self.scan_zongheng(self.url)
+        else:
+            messager.statusbar_message.emit('Could not find book info, please set book page manually')
 
         if 'images' not in os.listdir('.') and self.cover_href:
             os.mkdir('images')
         if self.cover_href:
             myopener = DeceptionOpener()
             response = myopener.open(self.cover_href)
-            self.cover = response.read()
-
+            try:
+                self.cover = response.read()
+            except:
+                self.cover = myopener.open('http://image.cmfu.com/books/1.jpg').read()
     def scan_lkong(self, url):
         self.title = self.soup.find('h1').string
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
