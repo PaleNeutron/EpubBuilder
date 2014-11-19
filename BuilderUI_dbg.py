@@ -23,14 +23,13 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         super(BuilderUI, self).__init__()
         # set open method depends on platform
         if sys.platform == "win32":
-            self.system_open = "open"
+            self.system_open = os.startfile
             from win32com.shell import shell, shellcon
-
             mydocument_path = shell.SHGetFolderPath(0, shellcon.CSIDL_PERSONAL, None, 0)
             self.txt_folder = mydocument_path + os.sep + 'txt'
             self.epub_folder = mydocument_path + os.sep + 'epub'
         elif sys.platform == "linux":
-            self.system_open = "xdg-open"
+            self.system_open = lambda path: subprocess.Popen(["xdg-open",path])
             self.txt_folder = os.path.expanduser('~/Documents/txt')
             self.epub_folder = os.path.expanduser('~/Documents/epub')
 
@@ -112,7 +111,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.lineEdit_bookpage.setText(url)
 
     def edit_text(self):
-        subprocess.Popen([self.system_open, self.file_path])
+        self.system_open(self.file_path)
 
     def load_text(self):
         self.pushButton_start_build.setEnabled(True)

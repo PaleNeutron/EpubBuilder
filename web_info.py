@@ -51,7 +51,7 @@ class BookInfo(DeceptionOpener):
     def analyse_page(self):
         self.info = self.response.info()
         self.html = self.response.read().decode(self.info.get_content_charset(), errors='ignore')
-        self.soup = bs4.BeautifulSoup(self.html,"html.parser")
+        self.soup = bs4.BeautifulSoup(self.html, "lxml")
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             if self.soup.find("div", {"class": "alert_info"}):
@@ -63,7 +63,7 @@ class BookInfo(DeceptionOpener):
                 search_soup = bs4.BeautifulSoup(
                     search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
                 newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
-                self.url = newurl
+                self.url = newurl.split('?')[0]  # 权宜之计，暂时没找到把所有非ASCII字符自动quote的函数
                 self.open_page()
             else:
                 self.scan_lkong(self.url)
@@ -113,6 +113,7 @@ class BookInfo(DeceptionOpener):
         self.author = pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
         self.description = '\n'.join([pg(i).text() for i in pg('.info p')])
         self.cover_href = pg('.bookcover > img:nth-child(1)').attr('src')
+
     def scan_zongheng(self, url):
         fl = self.soup.body.find('div', {'class': 'status fl'})
         self.title = fl.h1.find("a", target=False).string.strip()
