@@ -51,6 +51,7 @@ class BookInfo(DeceptionOpener):
     def analyse_page(self):
         self.info = self.response.info()
         self.html = self.response.read().decode(self.info.get_content_charset(), errors='ignore')
+        self.pg = pq(self.html)
         self.soup = bs4.BeautifulSoup(self.html, "lxml")
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
@@ -111,15 +112,18 @@ class BookInfo(DeceptionOpener):
         self.cover_href = self.soup.body.find("img", {"itemprop": "image"}).get("src")
 
     def scan_chuangshi(self, url):
-        pg = pq(self.html)
-        self.title = pg('div.title:nth-child(1) > a:nth-child(2) > b:nth-child(1)').text()
-        self.author = pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
-        self.description = '\n'.join([pg(i).text() for i in pg('.info p')])
-        self.cover_href = pg('.bookcover > img:nth-child(1)').attr('src')
+        self.title = self.pg('div.title:nth-child(1) > a:nth-child(2) > b:nth-child(1)').text()
+        self.author = self.pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
+        self.description = '\n'.join([self.pg(i).text() for i in self.pg('.info p')])
+        self.cover_href = self.pg('.bookcover > img:nth-child(1)').attr('src')
 
     def scan_zongheng(self, url):
-        fl = self.soup.body.find('div', {'class': 'status fl'})
-        self.title = fl.h1.find("a", target=False).string.strip()
-        self.author = fl.p.em.a.string.strip()
-        self.description = fl.find('div', {'class': 'info_con'}).p.string
-        self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
+        # fl = self.soup.body.find('div', {'class': 'status fl'})
+        # self.title = fl.h1.find("a", target=False).string.strip()
+        # self.author = fl.p.em.a.string.strip()
+        # self.description = fl.find('div', {'class': 'info_con'}).p.string
+        # self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
+        self.title = self.pg('.status a')[1].text
+        self.author = self.pg('.author > em:nth-child(1) > a:nth-child(1)').text()
+        self.description = self.pg('.info_con').text()
+        self.cover_href = self.pg('.book_cover > p:nth-child(2) > a:nth-child(1) > img:nth-child(1)').attr('src')

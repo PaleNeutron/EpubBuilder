@@ -1,6 +1,7 @@
 import urllib.parse
 import os
 import subprocess
+import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -16,11 +17,11 @@ import epubzip
 import messager
 
 
-class BuilderUI(ui_mainwindow.Ui_MainWindow):
+class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
     """the mainUI for EpubBuilder, contains the signal and.pyqtSlot"""
 
     def __init__(self):
-        super(BuilderUI, self).__init__()
+        super(BuilderUI_dbg, self).__init__()
         # set open method depends on platform
         if sys.platform == "win32":
             self.system_open = os.startfile
@@ -50,9 +51,6 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.rate = messager.process_message
         self.main_window = my_mainwindow.MyMainWindow()
         self.setupUi(self.main_window)
-
-        self.open_url_thread = WorkThread(self.open_url)
-        self.build_thread = WorkThread(self.generate_epub)
 
         self.pushButton_get_info.clicked.connect(self.open_url)
         self.lineEdit_title.textChanged.connect(self.to_bookpage)
@@ -158,7 +156,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
                 self.pushButton_start_build.setEnabled(True)
                 self.pushButton_edit_text.setEnabled(True)
 
-    def build(self):
+    def pre_build(self):
         self.title = self.lineEdit_title.text()
         self.author = self.lineEdit_author.text()
         self.chr_pattern = self.comboBox_re.currentText()
@@ -168,17 +166,6 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.label_cover.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/cover.jpg'))
         self.progressBar.setMaximum(0)
         self.progressBar.setMinimum(0)
-        text = neattxt.get_neat_txt(self.file_path, self.title, self.txt_folder).split("\n")
-        messager.text_neated.emit()
-        txt2html.format_txt(self.title, self.author, text, self.description, self.txt_folder, self.chr_pattern)
-        self.message.emit('split is done')
-        strucreat.structure(self.description, self.chr_pattern)
-        self.message.emit('structure is done')
-        epubzip.epubzip('epubobject', self.title)
-        arrange.arrange(self.file_path, self.txt_folder, self.epub_folder, self.title)
-        messager.process_message.emit(100)
-        self.message.emit('arrange is done')
-        messager.finished.emit()
 
     def generate_epub(self):
         text = neattxt.get_neat_txt(self.file_path, self.title, self.txt_folder).split("\n")
@@ -192,6 +179,10 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         messager.process_message.emit(100)
         self.message.emit('arrange is done')
         messager.finished.emit()
+
+    def build(self):
+        self.pre_build()
+        self.generate_epub()
 
     def finish_build(self):
         self.file_path = self.txt_folder + os.sep + self.title + '.txt'
@@ -208,18 +199,7 @@ class BuilderUI(ui_mainwindow.Ui_MainWindow):
         self.progressBar.setMinimum(0)
         self.progressBar.setMaximum(100)
 
-
-class WorkThread(QtCore.QThread):
-    def __init__(self, function):
-        super(WorkThread, self).__init__()
-        self.function = function
-
-    def run(self):
-        self.function()
-
-
 if __name__ == '__main__':
-    import sys
     # fix a bug in pyqt5
     # if sys.platform == "win32":
     # os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.dirname(QtCore.__file__) + "/plugins/platforms"
@@ -227,6 +207,6 @@ if __name__ == '__main__':
     # err_log = open("error.log", "a")
     # sys.stderr = err_log #redirct STDERR
     app = QtWidgets.QApplication(sys.argv)
-    ui = BuilderUI()
+    ui = BuilderUI_dbg()
     ui.main_window.show()
     sys.exit(app.exec_())
