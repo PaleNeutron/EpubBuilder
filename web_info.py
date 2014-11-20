@@ -1,5 +1,8 @@
 __author__ = 'PaleNeutron'
 from urllib.request import FancyURLopener, Request
+from urllib.parse import quote, unquote
+import urllib.request
+import urllib.parse
 import os
 from pyquery import PyQuery as pq
 import bs4
@@ -56,16 +59,15 @@ class BookInfo(DeceptionOpener):
         self.host = Request(self.url).host
         if self.host == 'www.lkong.net':
             if self.soup.find("div", {"class": "alert_info"}):
-                messager.statusbar_message.emit("book not in lkong, guess if in chuangshi")
-                search_opener = DeceptionOpener()
-                bookname = self.url.replace('http://www.lkong.net/book.php?mod=view&bookname=', '')
-                search_result = search_opener.open(
-                    "http://chuangshi.qq.com/search/searchindex?type=all&wd=%s" % bookname)
-                search_soup = bs4.BeautifulSoup(
-                    search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
-                newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
-                self.url = newurl.split('?')[0]  # 权宜之计，暂时没找到把所有非ASCII字符自动quote的函数
-                self.open_page()
+                quoted_title = self.url.replace('http://www.lkong.net/book.php?mod=view&bookname=', '')
+                self.title = unquote(quoted_title)
+                messager.statusbar_message.emit("book not in lkong")
+                if self.search_chuangshi(quoted_title):
+                    pass
+                elif self.search_qidian(quoted_title):
+                    pass
+
+
             else:
                 self.scan_lkong(self.url)
                 bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
@@ -98,6 +100,47 @@ class BookInfo(DeceptionOpener):
                 self.cover = response.read()
             except:
                 self.cover = myopener.open('http://image.cmfu.com/books/1.jpg').read()
+
+    def search_chuangshi(self, quoted_title):
+        search_opener = DeceptionOpener()
+        search_result = search_opener.open(
+            "http://chuangshi.qq.com/search/searchindex?type=all&wd=" + quoted_title)
+        search_soup = bs4.BeautifulSoup(
+            search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
+        if search_soup.find(id="searchResultList").h1.a.getText() == self.title:
+            newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
+            self.url = newurl.split('?')[0]  # 权宜之计，暂时没找到把所有非ASCII字符自动quote的函数
+            self.open_page()
+            return True
+        else:
+            messager.statusbar_message.emit("book not in chuangshi")
+
+    def search_qidian(self, quoted_title):  # TODO 其实获取的bookinfo已经包含了所需的全部信息，只是修改的话需要大改结构，暂时放下
+        import json
+
+        url = urllib.parse.urlunparse([
+            'http',
+            'sosu.qidian.com', '/ajax/search.ashx',
+            '',
+            urllib.parse.urlencode({
+                                       'method': ['suggestion'],
+                                       'keyword': ['重生之纯白']
+                                   }, doseq=True),
+            ''])
+        qidian_search_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0',  # 非必要
+            'Referer': 'http://sosu.qidian.com/searchresult.aspx?&keyword=',
+        }
+        req = urllib.request.Request(url, headers=qidian_search_headers, method='GET')
+        j = json.loads(urllib.request.urlopen(req).read().decode('utf8'))
+        bookinfo = j['Data']['search_response']['books'][0]
+        if bookinfo['bookname'] == self.title:
+            self.url = 'http://www.qidian.com/Book/%s.aspx' % bookinfo['bookid']
+            self.open_page()
+            return True
+        else:
+            messager.statusbar_message.emit("book not in qidian")
+
     def scan_lkong(self, url):
         self.title = self.soup.find('h1').string
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
