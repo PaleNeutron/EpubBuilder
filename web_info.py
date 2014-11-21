@@ -124,7 +124,7 @@ class BookInfo(DeceptionOpener):
             '',
             urllib.parse.urlencode({
                                        'method': ['suggestion'],
-                                       'keyword': ['重生之纯白']
+                                       'keyword': [self.title]
                                    }, doseq=True),
             ''])
         qidian_search_headers = {
