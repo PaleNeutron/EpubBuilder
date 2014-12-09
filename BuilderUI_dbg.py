@@ -92,7 +92,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
             if len(self.bookid) < 8:  # 目前的判断规则没法直接从文件名区别是起点还是纵横，甚至有时候几乎不能自行分清起点和创世
                 url = "http://www.qidian.com/Book/%s.aspx" % self.bookid
             else:
-                url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % self.bookid  # 警告！网址中的ls是"历史"的含义，虽不影响使用，但是十分危险
+                url = "http://chuangshi.qq.com/bk/ls/%s.html" % self.bookid  # 警告！网址中的ls是"历史"的含义，虽不影响使用，但是十分危险
         else:
             url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
         self.lineEdit_bookpage.setText(url)
@@ -101,7 +101,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         sender = self.main_window.sender()
         url = ''
         if sender is self.radioButton_chuangshi:
-            url = "http://chuangshi.qq.com/bk/ls/%s-1.html" % self.bookid
+            url = "http://chuangshi.qq.com/bk/ls/%s.html" % self.bookid
         elif sender is self.radioButton_qidian:
             url = "http://www.qidian.com/Book/%s.aspx" % self.bookid
         elif sender is self.radioButton_zongheng:
