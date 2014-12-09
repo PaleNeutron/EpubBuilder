@@ -109,6 +109,8 @@ class BookInfo(DeceptionOpener):
             search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
         if search_soup.find(id="searchResultList").h1.a.getText() == self.title:
             newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
+            if "book.qq.com" in newurl: # 创世和起点的某个坑爹活动，似乎可以互相访问书籍，但是事实上大部分是404
+                return False
             self.url = newurl.split('?')[0]  # 权宜之计，暂时没找到把所有非ASCII字符自动quote的函数
             self.open_page()
             return True
