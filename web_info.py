@@ -91,8 +91,7 @@ class BookInfo(DeceptionOpener):
         else:
             messager.statusbar_message.emit('Could not find book info, please set book page manually')
 
-        if 'images' not in os.listdir('.') and self.cover_href:
-            os.mkdir('images')
+        
         if self.cover_href:
             myopener = DeceptionOpener()
             response = myopener.open(self.cover_href)
