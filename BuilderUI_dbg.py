@@ -161,7 +161,6 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         self.author = self.lineEdit_author.text()
         self.chr_pattern = self.comboBox_re.currentText()
         self.description = self.textEdit_chapter.document().toPlainText()
-        print(os.listdir('.'))
         if 'images' not in os.listdir('.'):
             os.mkdir('images')
         if not self.cover.isNull():

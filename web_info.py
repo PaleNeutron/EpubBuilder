@@ -141,7 +141,7 @@ class BookInfo(DeceptionOpener):
             return True
         else:
             messager.statusbar_message.emit("book not in qidian")
-
+    # TODO 下面这些函数的url参数是无用的，需要修改
     def scan_lkong(self, url):
         self.title = self.soup.find('h1').string
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
@@ -167,6 +167,8 @@ class BookInfo(DeceptionOpener):
         # self.author = fl.p.em.a.string.strip()
         # self.description = fl.find('div', {'class': 'info_con'}).p.string
         # self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
+        if "访问页面出错" in self.pg('body').text(): #说明书在原来的网址被删除了
+            return
         self.title = self.pg('.status a')[1].text
         self.author = self.pg('.author > em:nth-child(1) > a:nth-child(1)').text()
         self.description = self.pg('.info_con').text()
