@@ -150,7 +150,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
             self.check_has_txt()
 
     def check_has_txt(self):
-        if self.title + ".txt" in os.listdir(self.txt_folder):
+        if self.title + ".txt" in os.listdir(self.txt_folder) and self.txt_folder in self.file_path:
             self.file_path = self.txt_folder + os.sep + self.title + ".txt"
             if not self.pushButton_start_build.isEnabled():
                 self.pushButton_start_build.setEnabled(True)
