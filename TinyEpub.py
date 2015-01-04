@@ -7,7 +7,7 @@ import bs4
 def char2text(i):
     soup = bs4.BeautifulSoup(i)
     chapter = soup.body.getText().splitlines()
-    chapter = "\n".join(chapter).strip() + "\n\n"
+    chapter = "\n    ".join(chapter).strip() + "\n\n"
     return chapter
 
 
@@ -59,7 +59,8 @@ class Epub(zipfile.ZipFile):
 
 
 if __name__ == "__main__":
-    e = Epub("assz.epub")
-    import cProfile
-
-    cProfile.run("e.epub2txt()")
+    import sys
+    for path in sys.argv[1:]:
+        e = Epub(path)
+        print(path, "converted to text")
+        e.epub2txt()
