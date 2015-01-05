@@ -57,6 +57,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         self.pushButton_start_build.clicked.connect(self.build)
         self.pushButton_edit_text.clicked.connect(self.edit_text)
         self.main_window.file_loaded.connect(self.load_file)
+        self.main_window.image_loaded.connect(self.load_image)
         self.radioButton_qidian.clicked.connect(self.choose_site)
         self.radioButton_chuangshi.clicked.connect(self.choose_site)
         self.radioButton_zongheng.clicked.connect(self.choose_site)
@@ -96,6 +97,13 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         else:
             url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
         self.lineEdit_bookpage.setText(url)
+
+    @QtCore.pyqtSlot(QtGui.QImage)
+    def load_image(self, cover_image):
+        self.cover_byte = cover_image
+        self.cover.convertFromImage(cover_image)
+        self.label_cover.clear()
+        self.label_cover.setPixmap(self.cover)
 
     def choose_site(self):
         sender = self.main_window.sender()
