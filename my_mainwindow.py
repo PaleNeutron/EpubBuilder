@@ -3,11 +3,12 @@ import os
 from urllib.parse import urlparse, unquote
 import sys
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 
 class MyMainWindow(QtWidgets.QMainWindow):
     file_loaded = QtCore.pyqtSignal(str)
+    image_loaded = QtCore.pyqtSignal(QtGui.QImage)
 
     def __init__(self):
         super(MyMainWindow, self).__init__()
@@ -29,11 +30,11 @@ class MyMainWindow(QtWidgets.QMainWindow):
     def load_file(self, file_path):
         self.file_loaded.emit(file_path)
 
-    def image_loaded(self, file_path):
-        with open(file_path, "b") as f:
-            r = f.read()
-        with open("images/cover.jpg", "wb") as f:
-            f.write(r)
+    # def image_loaded(self, file_path):
+    #     with open(file_path, "b") as f:
+    #         r = f.read()
+    #     with open("images/cover.jpg", "wb") as f:
+    #         f.write(r)
 
     # def epub_loaded(self, file_path):
     # self.epub_path = file_path
@@ -62,6 +63,8 @@ class MyMainWindow(QtWidgets.QMainWindow):
         #     elif file_path.endswith(".epub"):
         #         self.epub_loaded(file_path)
         #         print(file_path)
+        if ev.mimeData().hasImage():
+            self.image_loaded.emit(ev.mimeData().imageData())
         if ev.mimeData().hasFormat(self.text_uri_mime):
             uri = ev.mimeData().data(self.text_uri_mime).data().decode("utf8").strip()
             file_path = self.uri_to_path(uri)
