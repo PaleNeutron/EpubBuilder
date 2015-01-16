@@ -74,7 +74,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
 
     @QtCore.pyqtSlot(str)
     def load_file(self, file_path):
-        if file_path.endswith(".txt"):
+        if file_path.lower().endswith(".txt"):
             self.file_path = file_path
             self.title = os.path.basename(os.path.splitext(file_path)[0])
             self.load_text()
