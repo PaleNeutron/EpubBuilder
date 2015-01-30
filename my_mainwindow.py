@@ -69,28 +69,28 @@ class MyMainWindow(QtWidgets.QMainWindow):
             uri = ev.mimeData().data(self.text_uri_mime).data().decode("utf8").strip()
             file_path = self.uri_to_path(uri)
 
-            if uri.endswith(".txt") or uri.endswith(".epub"):
+            if uri.lower().endswith(".txt") or uri.lower().endswith(".epub"):
                 self.load_file(file_path)
 
-            elif uri.endswith(".zip"):
+            elif uri.lower().endswith(".zip"):
                 #打开一个zip文档，获取其中的txt
                 import zipfile
 
                 zf = zipfile.ZipFile(file_path)
                 for filename in zf.namelist():
                     #如果文档中txt文件大于10kb则解压到当前文件夹
-                    if filename.endswith(".txt") and zf.getinfo(filename).file_size > 10 * 1024:
+                    if filename.lower().endswith(".txt") and zf.getinfo(filename).file_size > 10 * 1024:
                         zf.extract(filename)
                         # 发送文件位置信号
                     self.load_file(os.curdir + os.sep + filename)
                     break
-            elif uri.endswith(".rar"):
+            elif uri.lower().endswith(".rar"):
                 import rarfile
 
                 rf = rarfile.RarFile(file_path)
                 for filename in rf.namelist():
                     # 如果文档中txt文件大于10kb则解压到当前文件夹
-                    if filename.endswith(".txt") and rf.getinfo(filename).file_size > 10 * 1024:
+                    if filename.lower().endswith(".txt") and rf.getinfo(filename).file_size > 10 * 1024:
                         rf.extract(filename)
                         #发送文件位置信号
                     self.load_file(os.curdir + os.sep + filename)

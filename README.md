@@ -7,6 +7,7 @@ A simple EpubBuilder convert text to epub. The program is specifically for text 
 * PyQt5
 * beautifulsoup4
 * rarfile
+* pyquery
 
 run: BudilderUI.py is the exec.
 
