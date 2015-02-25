@@ -66,10 +66,8 @@ class BookInfo(DeceptionOpener):
                     pass
                 elif self.search_qidian(quoted_title):
                     pass
-
-
             else:
-                self.scan_lkong(self.url)
+                self.scan_lkong()
                 bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
                 newhost = Request(bookpage).host
                 if newhost == 'www.qidian.com':
@@ -80,18 +78,15 @@ class BookInfo(DeceptionOpener):
                     self.open_page()
                     # else:
                     # self.scan_lkong(self.url)
-
-
         elif self.host == "chuangshi.qq.com":
-            self.scan_chuangshi(self.url)
+            self.scan_chuangshi()
         elif self.host == "www.qidian.com":
-            self.scan_qidian(self.url)
+            self.scan_qidian()
         elif self.host == 'book.zongheng.com':
-            self.scan_zongheng(self.url)
+            self.scan_zongheng()
         else:
             messager.statusbar_message.emit('Could not find book info, please set book page manually')
 
-        
         if self.cover_href:
             myopener = DeceptionOpener()
             response = myopener.open(self.cover_href)
@@ -108,7 +103,7 @@ class BookInfo(DeceptionOpener):
             search_result.read().decode(search_result.info().get_content_charset(), errors='ignore'))
         if search_soup.find(id="searchResultList").h1.a.getText() == self.title:
             newurl = search_soup.find(id="searchResultList").h1.a.get("href")  # 似乎创世很没节操的搜索系统永远不会搜不出东西
-            if "book.qq.com" in newurl: # 创世和起点的某个坑爹活动，似乎可以互相访问书籍，但是事实上大部分是404
+            if "book.qq.com" in newurl:  # 创世和起点的某个坑爹活动，似乎可以互相访问书籍，但是事实上大部分是404
                 return False
             self.url = newurl.split('?')[0]  # 权宜之计，暂时没找到把所有非ASCII字符自动quote的函数
             self.open_page()
@@ -128,6 +123,7 @@ class BookInfo(DeceptionOpener):
                                        'keyword': [self.title]
                                    }, doseq=True),
             ''])
+
         qidian_search_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0',  # 非必要
             'Referer': 'http://sosu.qidian.com/searchresult.aspx?&keyword=',
@@ -141,33 +137,35 @@ class BookInfo(DeceptionOpener):
             return True
         else:
             messager.statusbar_message.emit("book not in qidian")
+
     # TODO 下面这些函数的url参数是无用的，需要修改
-    def scan_lkong(self, url):
+    def scan_lkong(self):
         self.title = self.soup.find('h1').string
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()
         self.description = self.soup.find('div', {'class': 'indent bm_c'}).getText().strip()
         self.score = self.soup.find('strong', {'class': "ll rating_num"}).string
         self.cover_href = self.soup.find('img', attrs={'alt': self.title}).get('src')
 
-    def scan_qidian(self, url):
+    def scan_qidian(self):
         self.title = self.soup.find("div", {"class": "title"}).h1.getText().strip()
         self.author = self.soup.body.find("span", {"itemprop": "name"}).string.strip()
         self.description = "\n".join(self.soup.body.find("span", {"itemprop": "description"}).getText().split())
         self.cover_href = self.soup.body.find("img", {"itemprop": "image"}).get("src")
 
-    def scan_chuangshi(self, url):
+    def scan_chuangshi(self):
         self.title = self.pg('div.title:nth-child(1) > a:nth-child(2) > b:nth-child(1)').text()
         self.author = self.pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
         self.description = '\n'.join([self.pg(i).text() for i in self.pg('.info p')])
         self.cover_href = self.pg('.bookcover > img:nth-child(1)').attr('src')
 
-    def scan_zongheng(self, url):
+    def scan_zongheng(self):
         # fl = self.soup.body.find('div', {'class': 'status fl'})
         # self.title = fl.h1.find("a", target=False).string.strip()
         # self.author = fl.p.em.a.string.strip()
         # self.description = fl.find('div', {'class': 'info_con'}).p.string
         # self.cover_href = self.soup.body.find('div', {'class': 'book_cover fl'}).a.img.get('src')
-        if "访问页面出错" in self.pg('body').text(): #说明书在原来的网址被删除了
+        if "访问页面出错" in self.pg('body').text():  # 说明书在原来的网址被删除了
+            messager.statusbar_message.emit("book is deleted in zongheng")
             return
         self.title = self.pg('.status a')[1].text
         self.author = self.pg('.author > em:nth-child(1) > a:nth-child(1)').text()
