@@ -178,7 +178,7 @@ class BookInfo(DeceptionOpener):
         if "访问页面出错" in self.pg('body').text():  # 说明书在原来的网址被删除了
             messager.statusbar_message.emit("book is deleted in zongheng")
             return
-        self.title = self.pg('.status a')[1].text
+        self.title = self.pg('.status a')[1].text()
         self.author = self.pg('.author > em:nth-child(1) > a:nth-child(1)').text()
         self.description = self.pg('.info_con').text()
         self.cover_href = self.pg('.book_cover > p:nth-child(2) > a:nth-child(1) > img:nth-child(1)').attr('src')
