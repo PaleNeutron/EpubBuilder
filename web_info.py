@@ -1,8 +1,9 @@
 __author__ = 'PaleNeutron'
-from urllib.request import FancyURLopener, Request
+from urllib.request import FancyURLopener, Request, urlopen
 from urllib.parse import quote, unquote
 import urllib.request
 import urllib.parse
+import json
 import os
 from pyquery import PyQuery as pq
 import bs4
@@ -31,35 +32,38 @@ class BookInfo(DeceptionOpener):
         self.score = None
         self.cover_href = None
         self.cover = None
+        self.host = None
         self.url = url
 
     def open_page(self):
         # 确定访问的协议为http
         if self.url:
-            if not self.url[0:len(self.protocol)] == self.protocol:
-                self.url = self.protocol + self.url
-        try:
-            self.response = self.open(self.url)
-        except OSError as err:
-            if err.errno == 'socket error':
-                messager.statusbar_message.emit("please check url or website is busy")
-        if self.response.getcode() == 200:
-            self.analyse_page()
-        elif self.response.getcode() == 404:
-            messager.statusbar_message.emit("ERROR 404, page not found")
-        else:
-            messager.statusbar_message.emit(self.response.getcode())
-        messager.page_opened.emit()
+            if not self.url.startswith(self.protocol):
+                self.url = 'http://www.yousuu.com/name/' + urllib.parse.quote(self.url)
+            self.host = Request(self.url).host
+
+
+            try:
+                self.response = self.open(self.url)
+            except OSError as err:
+                if err.errno == 'socket error':
+                    messager.statusbar_message.emit("please check url or website is busy")
+            if self.response.getcode() == 200:
+                self.analyse_page()
+            elif self.response.getcode() == 404:
+                messager.statusbar_message.emit("ERROR 404, page not found")
+            else:
+                messager.statusbar_message.emit(self.response.getcode())
+            messager.page_opened.emit()
 
     def analyse_page(self):
         self.info = self.response.info()
         self.html = self.response.read().decode(self.info.get_content_charset(), errors='ignore')
         self.pg = pq(self.html)
         self.soup = bs4.BeautifulSoup(self.html, "lxml")
-        self.host = Request(self.url).host
-        if self.host == 'www.lkong.net':
-            if self.soup.find("div", {"class": "alert_info"}):
-                quoted_title = self.url.replace('http://www.lkong.net/book.php?mod=view&bookname=', '')
+        if self.host == 'www.yousuu.com':
+            if "对不起，本页没有找到匹配的书" in self.pg('body').text():
+                quoted_title = self.url.replace('http://www.yousuu.com/name/', '')
                 self.title = unquote(quoted_title)
                 messager.statusbar_message.emit("book not in lkong")
                 if self.search_chuangshi(quoted_title):
@@ -67,8 +71,8 @@ class BookInfo(DeceptionOpener):
                 elif self.search_qidian(quoted_title):
                     pass
             else:
-                self.scan_lkong()
-                bookpage = self.soup.find("div", id="info").find("a", title=True).get("href")
+                self.scan_yousuu()
+                bookpage = self.soup.find("a", {"class":"hidden-xs"}).get("href")
                 newhost = Request(bookpage).host
                 if newhost == 'www.qidian.com':
                     self.url = bookpage.replace("BookReader", "Book")
@@ -130,15 +134,22 @@ class BookInfo(DeceptionOpener):
         }
         req = urllib.request.Request(url, headers=qidian_search_headers, method='GET')
         j = json.loads(urllib.request.urlopen(req).read().decode('utf8'))
-        bookinfo = j['Data']['search_response']['books'][0]
-        if bookinfo['bookname'] == self.title:
-            self.url = 'http://www.qidian.com/Book/%s.aspx' % bookinfo['bookid']
-            self.open_page()
-            return True
+        if j['Data']['search_response']["totalcount"]:
+            bookinfo = j['Data']['search_response']['books'][0]
+            if bookinfo['bookname'] == self.title:
+                self.url = 'http://www.qidian.com/Book/%s.aspx' % bookinfo['bookid']
+                self.open_page()
+                return True
         else:
             messager.statusbar_message.emit("book not in qidian")
 
-    # TODO 下面这些函数的url参数是无用的，需要修改
+    def scan_yousuu(self):
+        self.title = self.pg("div.col-sm-7:nth-child(1) > div:nth-child(1) > span:nth-child(1)").text()
+        self.author = self.pg('.list-unstyled > li:nth-child(1)').text().replace("作者: ","")
+        self.description = self.pg(".text-indent").text()
+        self.cover_href = self.pg('.hidden-xs > img:nth-child(1)').attr('src')
+        self.score = self.pg('.ys-book-averrate > span:nth-child(1)').text()
+
     def scan_lkong(self):
         self.title = self.soup.find('h1').string
         self.author = self.soup.find(attrs={'class': 'pl'}).nextSibling.nextSibling.string.strip()

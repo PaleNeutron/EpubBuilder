@@ -95,7 +95,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
             else:
                 url = "http://chuangshi.qq.com/bk/ls/%s.html" % self.bookid  # 警告！网址中的ls是"历史"的含义，虽不影响使用，但是十分危险
         else:
-            url = 'http://www.lkong.net/book.php?mod=view&bookname=' + urllib.parse.quote(title)
+            url = title
         self.lineEdit_bookpage.setText(url)
 
     @QtCore.pyqtSlot(QtGui.QImage)
