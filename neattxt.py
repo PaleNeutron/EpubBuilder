@@ -35,6 +35,7 @@ def get_neat_txt(route, title, txt_folder):
     text = text.replace('520小说', '书')
     text = text.replace('520xs', '')
     text = re.sub('^正文[ 　\t]*', '', text, flags=re.M)
+    text = re.sub('『(.)』', lambda m: m.group(1), text, flags=re.M)
     text = hxchange.smart_change(text)
     text = text.replace('\n\n', '\n')
 
