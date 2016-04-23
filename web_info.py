@@ -188,7 +188,10 @@ class BookInfo(object):
 
     def scan_chuangshi(self):
         self.title = self.pg('div.title:nth-child(1) > a:nth-child(2) > b:nth-child(1)').text()
-        self.author = self.pg('.au_name > p:nth-child(2) > a:nth-child(1)').text()
+        self.author = self.pg('.bz > a:nth-child(1)').text()
+        if not self.author:
+            # 针对现在的页面有的在推广作者微信号，导致解析不到作者名
+            self.author = self.pg('#authorWeixinContent').text().split("说：")[0]
         self.description = '\n'.join([self.pg(i).text() for i in self.pg('.info p')])
         self.cover_href = self.pg('.bookcover > img:nth-child(1)').attr('src')
 
