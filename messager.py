@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 class Messenger(QtCore.QObject):
     msg = QtCore.pyqtSignal(str)
     update_rate = QtCore.pyqtSignal(float)
-    page_opened = QtCore.pyqtSignal()
+    info_is_got = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
     text_neated = QtCore.pyqtSignal()
 
@@ -18,7 +18,7 @@ statusbar_message = __messager__.msg
 process_message = __messager__.update_rate
 process_rate_list = [0, 0, 0, 70, 85, 90, 95]
 
-page_opened = __messager__.page_opened
+info_is_got = __messager__.info_is_got
 finished = __messager__.finished
 text_neated = __messager__.text_neated
 

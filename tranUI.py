@@ -5,8 +5,9 @@ import importlib.util
 import sys
 # from distutils.sysconfig import get_python_lib
 PyQt_path = os.path.dirname(importlib.util.find_spec("PyQt5").origin)
-uic_path = sys.exec_prefix + os.sep + "bin" + os.sep + "pyuic5"
-rcc_path = PyQt_path + os.sep + "pyrcc"
+# uic_path = sys.exec_prefix + os.sep + "bin" + os.sep + "pyuic5"
+uic_path = PyQt_path + os.sep + "pyuic5.bat"
+rcc_path = PyQt_path + os.sep + "pyrcc5.exe"
 
 for root, dirs, files in os.walk('.'):
     for file in files:

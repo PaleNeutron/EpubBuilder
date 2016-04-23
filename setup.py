@@ -2,8 +2,8 @@ from cx_Freeze import setup, Executable
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
-buildOptions = dict(packages = ["lxml._elementpath"], excludes = [],
-                    include_files=['LICENSE','libEGL.dll'])
+buildOptions = dict(packages = ["lxml"], excludes = [],
+                    include_files=['LICENSE','libEGL.dll','Builder.ico'])
 
 import sys
 base = 'Win32GUI' if sys.platform=='win32' else None
@@ -15,7 +15,7 @@ executables = [
 ]
 
 setup(name='EpubBuilder',
-      version = '1.1',
+      version = '1.1.5',
       description = 'a tool to build epub from txt file',
       options = dict(build_exe = buildOptions),
       executables = executables)

@@ -17,6 +17,10 @@
   <property name="windowTitle">
    <string>EpubBuilder</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>Builder.ico</normaloff>Builder.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0" colspan="2">
@@ -159,7 +163,14 @@
        </layout>
       </item>
       <item>
-       <widget class="QTextEdit" name="textEdit_chapter"/>
+       <widget class="QTextEdit" name="textEdit_chapter">
+        <property name="font">
+         <font>
+          <family>微软雅黑</family>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -284,7 +295,7 @@
      <x>0</x>
      <y>0</y>
      <width>782</width>
-     <height>28</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

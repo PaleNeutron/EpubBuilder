@@ -63,7 +63,7 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         self.radioButton_zongheng.clicked.connect(self.choose_site)
         self.message.connect(self.statusbar.showMessage)
         self.rate.connect(self.progressBar.setValue)
-        messager.page_opened.connect(self.get_info)
+        messager.info_is_got.connect(self.get_info)
         messager.finished.connect(self.finish_build)
         messager.text_neated.connect(self.reset_progressbar)
 
@@ -139,8 +139,9 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         self.label_cover.setPixmap(self.cover)
 
     def open_url(self):
-        self.book_info.url = self.lineEdit_bookpage.text()
-        self.book_info.open_page()
+        self.book_info.__init__()
+        self.book_info.open_page(self.lineEdit_bookpage.text())
+        messager.info_is_got.emit()
 
     def get_info(self):
         if self.book_info.title:
@@ -199,10 +200,10 @@ class BuilderUI_dbg(ui_mainwindow.Ui_MainWindow):
         self.show_contents()
 
     def show_contents(self):
-        with open('contents.txt', encoding='utf8') as f:
+        with open('contents.html', encoding='utf8') as f:
             r = f.read()
         # self.main_window.content_browser.clear()
-        self.main_window.content_browser.setText(r)
+        self.main_window.content_browser.setHtml(r)
         self.main_window.content_browser.show()
 
     def reset_progressbar(self):

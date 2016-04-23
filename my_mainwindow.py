@@ -21,6 +21,7 @@ class MyMainWindow(QtWidgets.QMainWindow):
 
     def create_content_browser(self):
         self.content_browser = QtWidgets.QTextBrowser()
+        self.content_browser.setFontPointSize(12)
         self.content_browser.setGeometry(QtCore.QRect(300, 150, 600, 400))
         self.windowList.append(self.content_browser)
 

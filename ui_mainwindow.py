@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/media/paleneutron/Database/EpubBuilder/ui_mainwindow.ui'
+# Form implementation generated from reading ui file 'D:\EpubBuilder\ui_mainwindow.ui'
 #
-# Created: Fri Aug 29 17:47:35 2014
-# by: PyQt5 UI code generator 5.3.1
+# Created: Mon Feb 22 23:49:35 2016
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(782, 421)
         MainWindow.setAcceptDrops(True)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Builder.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -78,6 +80,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.comboBox_re)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.textEdit_chapter = QtWidgets.QTextEdit(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑")
+        font.setPointSize(12)
+        self.textEdit_chapter.setFont(font)
         self.textEdit_chapter.setObjectName("textEdit_chapter")
         self.verticalLayout.addWidget(self.textEdit_chapter)
         self.gridLayout.addLayout(self.verticalLayout, 0, 1, 1, 1)
@@ -133,7 +139,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 782, 28))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 782, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -158,8 +164,7 @@ class Ui_MainWindow(object):
         self.radioButton_zongheng.setText(_translate("MainWindow", "纵横"))
         self.label_re.setText(_translate("MainWindow", "章节划分正则表达式"))
         self.comboBox_re.setItemText(0, _translate("MainWindow", "^(序|第[\\d零〇一二两三四五六七八九十百千]{0,10})章.{0,20}$"))
-        self.comboBox_re.setItemText(1, _translate("MainWindow",
-                                                   "^第[\\d零〇一二两三四五六七八九十百千]{0,10}卷.{0,20}(序|第[\\d零〇一二三四五六七八九十百千]{0,10})章.{0,20}$"))
+        self.comboBox_re.setItemText(1, _translate("MainWindow", "^第[\\d零〇一二两三四五六七八九十百千]{0,10}卷.{0,20}(序|第[\\d零〇一二三四五六七八九十百千]{0,10})章.{0,20}$"))
         self.comboBox_re.setItemText(2, _translate("MainWindow", "^.{0,5}第[\\d零〇一二两三四五六七八九十百千]{0,10}章.{0,20}$"))
         self.comboBox_re.setItemText(3, _translate("MainWindow", "^\\d{1,4}.{1,30}$"))
         self.comboBox_re.setItemText(4, _translate("MainWindow", "^[\\d零〇一二两三四五六七八九十百千]{1,10}[、 ]{1,3}.{0,20}$"))

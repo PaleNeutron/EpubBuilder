@@ -29,7 +29,7 @@ def format_txt(title, author, rawread, description, txt_folder, rule=r'(^.{0,20}
                 new = '<title>' + old + '</title>' + '\n' + '<h1>' + old + '</h1>\n'
                 read.append(new)
                 temp_file.write(old + '\n')
-                contents.append(old + '\t\t' + str(round(i * 100 / len(rawread), 1)) + '\n')  # 添加目录信息以及当前章节百分比
+                contents.append((old, str(round(i * 100 / len(rawread), 1))))  # 添加目录信息以及当前章节百分比
                 mark = i
         elif len(rawread[i]) > 2:
             read.append('<p>' + rawread[i] + '</p>\n')
@@ -51,6 +51,20 @@ def format_txt(title, author, rawread, description, txt_folder, rule=r'(^.{0,20}
     output.close()
     ##输出
 
-    with open('contents.txt', 'w', encoding='UTF-8') as contents_out:
-        contents_out.writelines(contents)
+    charpter_number = len(contents)
+    average_len = 100 / charpter_number
+    result = ['<table style="font-size: 2em">']
+    formal_percent = 0
+    simple_tip = '<tr>'
+    alert_tip = '<tr style="color:red">'
+    for title, percent in contents:
+        if float(percent) - formal_percent > 6*average_len:
+            title = alert_tip + "<td>" +title + "</td>"
+        else:
+            title = simple_tip + "<td>" +title + "</td>"
+        formal_percent = float(percent)
+        result.append(title+ "<td>" + percent + "</td>" + "</tr>")
+    result.append("</table>")
+    with open('contents.html', 'w', encoding='UTF-8') as contents_out:
+        contents_out.writelines(result)
         # #输出章节名用于检查

@@ -17,7 +17,8 @@ def get_neat_txt(route, title, txt_folder):
             with open(route, 'r', encoding=coding_list[i]) as source:
                 text = source.read()
             break
-        except UnicodeDecodeError:
+        except UnicodeDecodeError as e:
+            print(e)
             messager.statusbar_message.emit("encoding is not " + coding_list[i])
             if i == len(coding_list) - 1:
                 messager.statusbar_message.emit("can't read text file")
